@@ -1,0 +1,123 @@
+.crumbs {
+  margin: 0 0 var(--space-2);
+  font-size: var(--text-sm);
+  color: var(--color-text-muted);
+}
+
+.facts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3) var(--space-6);
+  margin: 0 0 var(--space-5);
+}
+
+.facts dt {
+  font-size: var(--text-xs);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--color-text-muted);
+}
+
+.facts dd {
+  margin: 0;
+  font-weight: 600;
+}
+
+.panel {
+  margin-bottom: var(--space-5);
+  max-width: 48rem;
+}
+
+.drop {
+  border: 2px dashed var(--color-border);
+  border-radius: var(--radius);
+  padding: var(--space-5);
+  background: var(--color-surface);
+  text-align: center;
+}
+
+.drop p {
+  margin: 0 auto var(--space-1);
+}
+
+.dragging {
+  border-color: var(--color-focus);
+  background: var(--color-selected);
+}
+
+.pick {
+  color: var(--color-link);
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.pick:focus-within {
+  outline: 2px solid var(--color-focus);
+  outline-offset: 2px;
+}
+
+.hiddenInput {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+}
+
+.hint {
+  font-size: var(--text-sm);
+  color: var(--color-text-muted);
+}
+
+.chosen {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-3);
+  margin-top: var(--space-3);
+}
+
+.chosen p {
+  margin: 0;
+}
+
+.progress {
+  width: 12rem;
+}
+
+.sha {
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  color: var(--color-text-muted);
+}
+
+.flagged {
+  background: var(--color-warning-bg);
+}
+
+.flags {
+  list-style: none;
+  margin: var(--space-1) 0 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  font-weight: 400;
+}
+
+.values {
+  margin: 0;
+  padding-left: var(--space-4);
+}
+
+.value {
+  font-family: var(--font-mono);
+  word-break: break-all;
+}
+
+.caption {
+  caption-side: bottom;
+  text-align: left;
+  padding: var(--space-2) var(--space-3);
+  font-size: var(--text-xs);
+  color: var(--color-text-muted);
+}

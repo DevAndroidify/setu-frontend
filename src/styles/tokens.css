@@ -1,0 +1,62 @@
+/* Design tokens: every color, size and space in the app comes from here. */
+:root {
+  --font-sans:
+    system-ui, -apple-system, 'Segoe UI', Roboto, 'Noto Sans', 'Noto Sans Devanagari', 'Mangal',
+    sans-serif;
+  --font-mono: ui-monospace, 'SFMono-Regular', Consolas, monospace;
+
+  --text-xs: 0.75rem;
+  --text-sm: 0.875rem;
+  --text-md: 1rem;
+  --text-lg: 1.25rem;
+  --text-xl: 1.75rem;
+
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.5rem;
+  --space-6: 2.5rem;
+
+  --radius: 6px;
+  --radius-pill: 999px;
+
+  --color-bg: #f6f7f9;
+  --color-surface: #ffffff;
+  --color-text: #1b1f24;
+  --color-text-muted: #5b6470;
+  --color-border: #dde1e6;
+  --color-hover: #eef1f5;
+  --color-selected: #e2ebfb;
+  --color-brand: #1d4e89;
+  --color-on-brand: #ffffff;
+  --color-link: #1d5fbf;
+  --color-success: #17693a;
+  --color-success-bg: #e3f4e9;
+  --color-danger: #b42318;
+  --color-danger-bg: #fde8e6;
+  --color-warning: #8a5a00;
+  --color-warning-bg: #fff4d6;
+  --color-focus: #2f6fe0;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-bg: #111418;
+    --color-surface: #191d22;
+    --color-text: #e7eaee;
+    --color-text-muted: #9aa4b0;
+    --color-border: #2c323a;
+    --color-hover: #222830;
+    --color-selected: #1e3352;
+    --color-brand: #163d6c;
+    --color-link: #7fb0ff;
+    --color-success: #6fd398;
+    --color-success-bg: #143322;
+    --color-danger: #ff8a7d;
+    --color-danger-bg: #3a1714;
+    --color-warning: #ffcc66;
+    --color-warning-bg: #3a2c0d;
+    --color-focus: #7fb0ff;
+  }
+}
