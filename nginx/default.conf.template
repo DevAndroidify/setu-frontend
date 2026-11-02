@@ -1,0 +1,40 @@
+server {
+    listen 80;
+    server_name _;
+    server_tokens off;
+    root /usr/share/nginx/html;
+
+    # Matches the backend's 50 MB upload limit, so the backend gives the error, not nginx.
+    client_max_body_size 51m;
+
+    location /api/ {
+        proxy_pass ${SETU_API_URL};
+        proxy_http_version 1.1;
+        proxy_set_header Connection "";
+        proxy_set_header Host $host;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        # Run progress is a server-sent event stream: pass each event on as it arrives.
+        proxy_buffering off;
+        proxy_read_timeout 1h;
+    }
+
+    location /health/ {
+        proxy_pass ${SETU_API_URL};
+        proxy_set_header Host $host;
+    }
+
+    # Built files have a content hash in their name, so they never change.
+    location /assets/ {
+        include /etc/nginx/security-headers.conf;
+        add_header Cache-Control "public, max-age=31536000, immutable";
+        try_files $uri =404;
+    }
+
+    # Every other path is a page of the app: serve index.html, and always fetch it fresh.
+    location / {
+        include /etc/nginx/security-headers.conf;
+        add_header Cache-Control "no-cache";
+        try_files $uri /index.html;
+    }
+}

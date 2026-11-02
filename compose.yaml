@@ -1,0 +1,11 @@
+# The production build behind nginx on http://localhost:8080. Start the backend first
+# (its README); by default nginx reaches it on the host's port 3000.
+services:
+  web:
+    build: .
+    ports:
+      - '8080:80'
+    environment:
+      SETU_API_URL: ${SETU_API_URL:-http://host.docker.internal:3000}
+    extra_hosts:
+      - 'host.docker.internal:host-gateway'

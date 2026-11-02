@@ -36,7 +36,17 @@
 }
 
 .cardHead select {
-  min-width: 20rem;
+  min-width: min(20rem, 100%);
+}
+
+@media (max-width: 48rem) {
+  .card {
+    padding: var(--space-3);
+  }
+
+  .stepHead {
+    flex-wrap: wrap;
+  }
 }
 
 .cardErrors {

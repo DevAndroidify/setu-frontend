@@ -1,0 +1,37 @@
+/*
+ * Noto Sans Devanagari, served from our own build (no request leaves the site), for Nepali
+ * text only: unicode-range keeps Latin text in the system font, and the browser downloads
+ * these files only when a page shows Devanagari.
+ */
+@font-face {
+  font-family: 'Setu Devanagari';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('@fontsource/noto-sans-devanagari/files/noto-sans-devanagari-devanagari-400-normal.woff2')
+    format('woff2');
+  unicode-range:
+    U+0900-097F, U+1CD0-1CFF, U+200C-200D, U+20A8, U+20B9, U+25CC, U+A830-A839, U+A8E0-A8FF;
+}
+
+@font-face {
+  font-family: 'Setu Devanagari';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url('@fontsource/noto-sans-devanagari/files/noto-sans-devanagari-devanagari-600-normal.woff2')
+    format('woff2');
+  unicode-range:
+    U+0900-097F, U+1CD0-1CFF, U+200C-200D, U+20A8, U+20B9, U+25CC, U+A830-A839, U+A8E0-A8FF;
+}
+
+@font-face {
+  font-family: 'Setu Devanagari';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url('@fontsource/noto-sans-devanagari/files/noto-sans-devanagari-devanagari-700-normal.woff2')
+    format('woff2');
+  unicode-range:
+    U+0900-097F, U+1CD0-1CFF, U+200C-200D, U+20A8, U+20B9, U+25CC, U+A830-A839, U+A8E0-A8FF;
+}

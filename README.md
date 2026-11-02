@@ -33,6 +33,21 @@ npm run build      # production build in dist/
 npm run format     # Prettier (CI runs format:check)
 ```
 
+The tests include an axe-core accessibility check of every page (`src/test/a11y.test.tsx`)
+and a contrast check of the colour tokens (`src/styles/tokens.test.ts`).
+
+## Run the production build
+
+```bash
+docker compose up --build -d   # http://localhost:8080
+```
+
+nginx serves the built app and forwards `/api` and `/health` to the backend, so both share
+one origin, as the refresh cookie requires. By default it reaches the backend on the host's
+port 3000; set `SETU_API_URL` (for example `http://api:3000`) to point it elsewhere. The
+config is in `nginx/`: the API is proxied unbuffered so run progress streams live, uploads
+up to the backend's 50 MB limit pass through, and pages get a strict Content-Security-Policy.
+
 ## Layout
 
 ```
@@ -40,8 +55,10 @@ src/
   api/        fetch client: problem+json errors, request ids
   app/        app root, router, layout, error page
   auth/       session (in-memory access token, refresh, sign-out), roles and menu, route guards
-  features/   one folder per area: auth, home, sources (list, new, source + upload, profile), system
+  features/   one folder per area: auth, home, sources, mappings, runs, approvals, quarantine,
+              matches, records, audit, system
   ui/         shared controls, alerts, badges, toasts, problem messages, design CSS
-  styles/     design tokens and base styles
-  test/       test setup, a fake backend for fetch, render helpers for the whole app
+  styles/     design tokens, base styles, the self-hosted Devanagari font
+  test/       test setup, a fake backend for fetch, render helpers, the axe check
+nginx/        production server config (Dockerfile and compose.yaml are at the root)
 ```

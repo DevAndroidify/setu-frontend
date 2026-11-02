@@ -127,4 +127,16 @@
   .coming {
     display: none;
   }
+
+  .tagline {
+    display: none;
+  }
+
+  .header {
+    padding: var(--space-3);
+  }
+
+  .main {
+    padding: var(--space-4);
+  }
 }

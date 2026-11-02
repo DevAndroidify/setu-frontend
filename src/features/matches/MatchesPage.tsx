@@ -21,6 +21,8 @@ import {
 } from './api';
 import styles from './matches.module.css';
 
+/** Fields written in Nepali, marked so screen readers pronounce them as Nepali. */
+const NEPALI = new Set<keyof MatchRow>(['name_ne', 'father_name_ne']);
 const show = (v: MatchRow[keyof MatchRow]) => (v === null || v === '' ? '—' : String(v));
 const origin = (r: MatchRow, other: MatchRow) =>
   r.status === 'loaded' && r.runId !== other.runId
@@ -78,8 +80,8 @@ function Pair({
                   {label}
                   {differs && <span className="visually-hidden"> (differs)</span>}
                 </th>
-                <td>{show(row[key])}</td>
-                <td>{show(match[key])}</td>
+                <td lang={NEPALI.has(key) ? 'ne' : undefined}>{show(row[key])}</td>
+                <td lang={NEPALI.has(key) ? 'ne' : undefined}>{show(match[key])}</td>
               </tr>
             );
           })}

@@ -1,8 +1,9 @@
 /* Design tokens: every color, size and space in the app comes from here. */
 :root {
+  /* Devanagari first: its @font-face covers only Devanagari characters (fonts.css). */
   --font-sans:
-    system-ui, -apple-system, 'Segoe UI', Roboto, 'Noto Sans', 'Noto Sans Devanagari', 'Mangal',
-    sans-serif;
+    'Setu Devanagari', system-ui, -apple-system, 'Segoe UI', Roboto, 'Noto Sans', 'Nirmala UI',
+    'Mangal', sans-serif;
   --font-mono: ui-monospace, 'SFMono-Regular', Consolas, monospace;
 
   --text-xs: 0.75rem;

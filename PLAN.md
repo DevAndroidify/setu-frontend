@@ -19,23 +19,24 @@ Every role can search records and follow a run.
 
 ## Stack
 
-| Concern         | Choice                                                                              | Why                                                                                    |
-| --------------- | ----------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------- |
-| Build           | Vite 8 + React 19 + TypeScript (strict, same rules as the backend)                  | Fast dev server, small config                                                          |
-| Routing         | React Router 8                                                                      | Nested layouts, route-level role guards                                                |
-| Server state    | TanStack Query 5                                                                    | Caching, retries, pagination, invalidation after mutations                             |
-| Forms and input | Plain controlled forms, validated with zod (as the backend)                         | One validation library across the project                                              |
-| Styling         | Own small design system: CSS variables (tokens) + CSS Modules                       | No UI framework to fight; full control over Devanagari text, density and accessibility |
-| Tests           | Vitest + Testing Library (jsdom); HTTP mocked at `fetch` in unit tests              | Fast component tests                                                                   |
-| End-to-end      | Playwright against the real backend (last phase; asked for first, it is a new tool) | Proves whole user journeys                                                             |
+| Concern         | Choice                                                                            | Why                                                                                    |
+| --------------- | --------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------- |
+| Build           | Vite 8 + React 19 + TypeScript (strict, same rules as the backend)                | Fast dev server, small config                                                          |
+| Routing         | React Router 8                                                                    | Nested layouts, route-level role guards                                                |
+| Server state    | TanStack Query 5                                                                  | Caching, retries, pagination, invalidation after mutations                             |
+| Forms and input | Plain controlled forms, validated with zod (as the backend)                       | One validation library across the project                                              |
+| Styling         | Own small design system: CSS variables (tokens) + CSS Modules                     | No UI framework to fight; full control over Devanagari text, density and accessibility |
+| Tests           | Vitest + Testing Library (jsdom); HTTP mocked at `fetch` in unit tests            | Fast component tests                                                                   |
+| Accessibility   | axe-core in the Vitest suite on every page; a contrast test on the colour tokens  | Catches missing labels, roles and unreadable colours on each change                    |
+| Serving         | nginx (Docker): the built files, with `/api` and `/health` proxied to the backend | One origin in production, as in development                                            |
 
 New packages beyond these are added only when a phase needs them, and named in that phase.
 
 ## How it talks to the backend
 
 - **Same origin.** In development Vite proxies `/api`, `/health` and `/metrics` to
-  `http://localhost:3000`; in production the built files are served from the same host as
-  the API (e.g. one reverse proxy). The refresh cookie is `SameSite=Strict` and scoped to
+  `http://localhost:3000`; in production nginx serves the built files and proxies
+  the same paths (`Dockerfile`, `nginx/`, `compose.yaml`). The refresh cookie is `SameSite=Strict` and scoped to
   `/api/v1/auth`, and the backend has no CORS allowlist yet, so same origin is required.
 - **Auth.** `POST /auth/login` returns a 15-minute access token, kept in memory only (never
   in localStorage). The refresh token is an httpOnly cookie; on a 401 the client calls
@@ -142,11 +143,17 @@ filters, and chain verification that points to the first broken event.
 **Check:** an auditor unmasks a number with a reason and finds that action in the audit
 trail; verification after the tamper demo shows the exact broken `seq`.
 
-### F9. Polish and end-to-end
+### F9. Polish and serving (done)
 
-Accessibility pass (keyboard, focus, contrast, screen-reader labels), Devanagari font,
-responsive layout, empty and loading states everywhere, Playwright journeys for the main
-flows against the real backend, and a production build served behind the same origin.
+Accessibility pass: axe-core on every page and on an open dialog, a WCAG AA contrast test on
+both colour themes, Nepali cells marked `lang="ne"`. Noto Sans Devanagari self-hosted (only
+the Devanagari range, three weights). Responsive layout: wide tables scroll inside
+themselves on phones. A production image: nginx serves the build with security headers and
+proxies `/api` (unbuffered, so run progress streams) and `/health` to the backend.
 
-**Check:** the Playwright suite drives upload → map → dry run → approve → run → reconcile →
-rollback; the accessibility checks report no serious issues.
+Playwright was dropped (decided in F9): the user journeys are covered by the whole-app Vitest
+tests against a fake backend, and each backend endpoint by the backend's own e2e tests.
+
+**Check:** `npm test` reports no serious accessibility problems on any page; `docker compose
+up --build` serves the app on port 8080, where sign-in, refresh, upload and a production
+run's live progress work against the real backend.

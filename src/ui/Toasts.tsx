@@ -28,7 +28,8 @@ export function ToastProvider({ children }: { children: ReactNode }) {
   return (
     <ToastContext.Provider value={value}>
       {children}
-      <div className={styles.toasts} aria-live="polite" aria-label="Notifications">
+      {/* A labelled region (axe: aria-label is not allowed on a plain div). */}
+      <div className={styles.toasts} role="region" aria-live="polite" aria-label="Notifications">
         {toasts.map((t) => (
           <div key={t.id} className={styles.toast} role={t.kind === 'error' ? 'alert' : 'status'}>
             <p>{t.message}</p>

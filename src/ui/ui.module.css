@@ -303,3 +303,19 @@
   min-height: 6rem;
   resize: vertical;
 }
+
+/* Phones: wide tables scroll sideways inside themselves instead of widening the page. */
+@media (max-width: 48rem) {
+  .table {
+    display: block;
+    overflow-x: auto;
+  }
+
+  .pageHeader {
+    align-items: flex-start;
+  }
+
+  .dialog {
+    padding: var(--space-4);
+  }
+}
