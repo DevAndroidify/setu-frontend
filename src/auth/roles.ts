@@ -25,9 +25,9 @@ export type NavItem = {
 export const NAV: NavItem[] = [
   { label: 'Home', to: '/', roles: ALL_ROLES },
   { label: 'Sources', to: '/sources', roles: ['operator', 'admin'] },
-  { label: 'Runs', to: '/runs', roles: ['operator', 'approver', 'admin'] },
-  { label: 'Approvals', to: '/approvals', roles: ['approver'], phase: 'F6' },
-  { label: 'Reports', to: '/reports', roles: ['auditor'], phase: 'F6' },
+  { label: 'Runs', to: '/runs', roles: ['operator', 'approver', 'auditor', 'admin'] },
+  { label: 'Approvals', to: '/approvals', roles: ['approver'] },
+  { label: 'Reports', to: '/reports', roles: ['auditor'] },
   { label: 'Quarantine', to: '/quarantine', roles: ['operator', 'admin'], phase: 'F7' },
   { label: 'Duplicate review', to: '/matches', roles: ['reviewer'], phase: 'F7' },
   { label: 'Records', to: '/persons', roles: ALL_ROLES, phase: 'F8' },

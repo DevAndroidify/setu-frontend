@@ -1,0 +1,41 @@
+.crumbs {
+  margin: 0 0 var(--space-2);
+  font-size: var(--text-sm);
+  color: var(--color-text-muted);
+}
+
+.balance {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-4);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  max-width: 64rem;
+}
+
+.balance strong {
+  display: block;
+  font-size: var(--text-lg);
+}
+
+.balance span span {
+  font-size: var(--text-sm);
+}
+
+.term {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.op {
+  font-size: var(--text-lg);
+  color: var(--color-text-muted);
+}
+
+.hash {
+  font-size: var(--text-xs);
+}

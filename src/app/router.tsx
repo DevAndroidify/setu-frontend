@@ -3,7 +3,10 @@ import { RequireAuth, RequireRole } from '../auth/guards';
 import { LoginPage } from '../features/auth/LoginPage';
 import { HomePage } from '../features/home/HomePage';
 import { NotFoundPage } from '../features/home/NotFoundPage';
+import { ApprovalsPage } from '../features/approvals/ApprovalsPage';
 import { MappingEditorPage } from '../features/mappings/MappingEditorPage';
+import { ReportPage } from '../features/reconciliation/ReportPage';
+import { ReportsPage } from '../features/reconciliation/ReportsPage';
 import { MappingPage } from '../features/mappings/MappingPage';
 import { NewRunPage } from '../features/runs/NewRunPage';
 import { RunPage } from '../features/runs/RunPage';
@@ -22,7 +25,7 @@ const forSources = (page: React.ReactNode) => (
 );
 
 const forRuns = (page: React.ReactNode) => (
-  <RequireRole roles={['operator', 'approver', 'admin']}>{page}</RequireRole>
+  <RequireRole roles={['operator', 'approver', 'auditor', 'admin']}>{page}</RequireRole>
 );
 
 export const routes: RouteObject[] = [
@@ -57,6 +60,18 @@ export const routes: RouteObject[] = [
               { path: 'runs', element: forRuns(<RunsPage />) },
               { path: 'runs/new', element: forSources(<NewRunPage />) },
               { path: 'runs/:runId', element: forRuns(<RunPage />) },
+              {
+                path: 'runs/:runId/reconciliation',
+                element: <RequireRole roles={['auditor']}>{<ReportPage />}</RequireRole>,
+              },
+              {
+                path: 'approvals',
+                element: <RequireRole roles={['approver']}>{<ApprovalsPage />}</RequireRole>,
+              },
+              {
+                path: 'reports',
+                element: <RequireRole roles={['auditor']}>{<ReportsPage />}</RequireRole>,
+              },
               { path: '*', element: <NotFoundPage /> },
             ],
           },

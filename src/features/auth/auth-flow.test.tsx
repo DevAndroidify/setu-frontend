@@ -79,8 +79,8 @@ describe('menus by role', () => {
   it.each([
     ['operator', ['Home', 'Sources', 'Runs', 'System status'], ['Quarantine', 'Records']],
     ['reviewer', ['Home', 'System status'], ['Duplicate review', 'Records']],
-    ['approver', ['Home', 'Runs', 'System status'], ['Approvals']],
-    ['auditor', ['Home', 'System status'], ['Reports', 'Audit trail']],
+    ['approver', ['Home', 'Runs', 'Approvals', 'System status'], ['Records']],
+    ['auditor', ['Home', 'Runs', 'Reports', 'System status'], ['Records', 'Audit trail']],
   ] as const)('shows the %s their own menu', async (role, links, coming) => {
     renderApp({ route: '/', user: userFor(role) });
     const nav = await screen.findByRole('navigation', { name: 'Main' });

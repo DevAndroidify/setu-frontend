@@ -4,6 +4,7 @@ import type {
   InputHTMLAttributes,
   ReactNode,
   SelectHTMLAttributes,
+  TextareaHTMLAttributes,
 } from 'react';
 import styles from './ui.module.css';
 
@@ -48,6 +49,40 @@ export function TextField({
         aria-invalid={error ? true : undefined}
         aria-describedby={describedBy || undefined}
         {...input}
+      />
+      {error && (
+        <span id={`${id}-error`} className={styles.fieldError}>
+          {error}
+        </span>
+      )}
+    </div>
+  );
+}
+
+export function TextAreaField({
+  label,
+  hint,
+  error,
+  ...textarea
+}: FieldProps & TextareaHTMLAttributes<HTMLTextAreaElement>) {
+  const id = useId();
+  const describedBy = [hint && `${id}-hint`, error && `${id}-error`].filter(Boolean).join(' ');
+  return (
+    <div className={styles.field}>
+      <label className={styles.label} htmlFor={id}>
+        {label}
+      </label>
+      {hint && (
+        <span id={`${id}-hint`} className={styles.hint}>
+          {hint}
+        </span>
+      )}
+      <textarea
+        id={id}
+        className={`${styles.input} ${styles.textarea}`}
+        aria-invalid={error ? true : undefined}
+        aria-describedby={describedBy || undefined}
+        {...textarea}
       />
       {error && (
         <span id={`${id}-error`} className={styles.fieldError}>

@@ -113,7 +113,7 @@ pause, resume, cancel, submit for approval. Adds `GET /runs`.
 **Check:** starting a dry run of 1,000 rows shows batches moving through the stages live and
 ends with counts that add up to the total.
 
-### F6. Approvals, reconciliation and rollback
+### F6. Approvals, reconciliation and rollback (done)
 
 The approver's queue of production runs awaiting approval, each with its latest dry-run
 counts; approve or reject with a reason (the maker's own runs show why they cannot be

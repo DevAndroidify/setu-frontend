@@ -1,6 +1,10 @@
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { Link, useParams } from 'react-router';
 import { useAuth } from '../../auth/context';
+import { listApprovals, pendingOf } from '../approvals/api';
+import { ApprovalHistory } from '../approvals/ApprovalHistory';
+import { DecisionControls } from '../approvals/DecisionControls';
+import { RollbackControl } from '../approvals/RollbackControl';
 import { Alert, Badge, Button, PageHeader } from '../../ui/controls';
 import { ProblemMessage } from '../../ui/ProblemMessage';
 import { Spinner } from '../../ui/Spinner';
@@ -8,6 +12,7 @@ import { useToast } from '../../ui/toast-context';
 import { formatDateTime, formatNumber } from '../sources/format';
 import { type RunAction, runAction, type RunDetail } from './api';
 import styles from './runs.module.css';
+import ui from '../../ui/ui.module.css';
 import {
   ACTION_LABELS,
   availableActions,
@@ -70,6 +75,11 @@ export function RunPage() {
   const queryClient = useQueryClient();
   const notify = useToast();
   const run = useLiveRun(runId);
+  const approvals = useQuery({
+    queryKey: ['approvals', runId],
+    queryFn: () => listApprovals(runId),
+    enabled: run.data?.mode === 'production',
+  });
   const act = useMutation({
     mutationFn: (action: RunAction) => runAction(runId, action),
     onSuccess: async (_r, action) => {
@@ -84,6 +94,12 @@ export function RunPage() {
   const r = run.data;
   const done = completion(r);
   const actions = user ? availableActions(r, user.role) : [];
+  const role = user?.role;
+  const canRollBack =
+    role === 'approver' &&
+    r.mode === 'production' &&
+    ['completed', 'cancelled', 'failed'].includes(r.status);
+  const hasReport = role === 'auditor' && (r.status === 'completed' || r.status === 'rolled_back');
 
   return (
     <section aria-labelledby="run-title">
@@ -94,6 +110,12 @@ export function RunPage() {
         title={`${MODE[r.mode]} of ${r.file.filename}`}
         actions={
           <span className={styles.actions}>
+            {hasReport && (
+              <Link className={`${ui.button} ${ui.primary}`} to={`/runs/${r.id}/reconciliation`}>
+                Reconciliation report
+              </Link>
+            )}
+            {canRollBack && <RollbackControl run={r} />}
             {actions.map((a) => (
               <Button
                 key={a}
@@ -112,9 +134,20 @@ export function RunPage() {
         {run.live && <span className={styles.live}>● Live</span>}
       </p>
       {act.isError && <ProblemMessage error={act.error} title="That did not work" />}
-      {r.status === 'awaiting_approval' && (
+      {r.status === 'awaiting_approval' && role !== 'approver' && (
         <Alert kind="info">
           <p>Waiting for an approver. It cannot be approved by whoever created or submitted it.</p>
+        </Alert>
+      )}
+      {r.status === 'awaiting_approval' && role === 'approver' && approvals.data && (
+        <section aria-label="Decision" className={styles.decision}>
+          <p>This production run is waiting for your decision.</p>
+          <DecisionControls run={r} pending={pendingOf(approvals.data)} />
+        </section>
+      )}
+      {r.status === 'rolled_back' && (
+        <Alert kind="info">
+          <p>Rolled back: the records it loaded were removed. Its report and audit trail remain.</p>
         </Alert>
       )}
       {r.status === 'approved' && (
@@ -185,6 +218,7 @@ export function RunPage() {
         <Stages run={r} />
         <Outcomes run={r} />
       </section>
+      {r.mode === 'production' && <ApprovalHistory runId={r.id} />}
     </section>
   );
 }

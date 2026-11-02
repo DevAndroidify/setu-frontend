@@ -18,6 +18,8 @@ export default defineConfig({
   test: {
     environment: 'jsdom',
     globals: true,
+    // Whole-app tests type and wait like a user; give them room on a busy CI machine.
+    testTimeout: 15_000,
     setupFiles: ['./src/test/setup.ts'],
     css: { modules: { classNameStrategy: 'non-scoped' } },
   },

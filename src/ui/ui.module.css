@@ -266,3 +266,40 @@
   color: var(--color-text-muted);
   text-align: center;
 }
+
+.backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 30;
+  display: grid;
+  place-items: center;
+  padding: var(--space-4);
+  background: rgb(0 0 0 / 0.45);
+}
+
+.dialog {
+  width: 100%;
+  max-width: 34rem;
+  max-height: calc(100vh - 2rem);
+  overflow: auto;
+  padding: var(--space-5);
+  background: var(--color-surface);
+  border-radius: calc(var(--radius) * 2);
+  box-shadow: 0 12px 40px rgb(0 0 0 / 0.3);
+}
+
+.dialog h2 {
+  margin-top: 0;
+}
+
+.dialogActions {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--space-2);
+  margin-top: var(--space-4);
+}
+
+.textarea {
+  min-height: 6rem;
+  resize: vertical;
+}
