@@ -44,7 +44,9 @@ docker compose up --build -d   # http://localhost:8080
 
 nginx serves the built app and forwards `/api` and `/health` to the backend, so both share
 one origin, as the refresh cookie requires. By default it reaches the backend on the host's
-port 3000; set `SETU_API_URL` (for example `http://api:3000`) to point it elsewhere. The
+port 3000; set `SETU_API_URL` (for example `http://api:3000`) to point it elsewhere. Start
+the backend with `TRUST_PROXY_HOPS=1`: otherwise every user reaches it from nginx's address
+and they all share one sign-in rate limit (10 a minute). The
 config is in `nginx/`: the API is proxied unbuffered so run progress streams live, uploads
 up to the backend's 50 MB limit pass through, and pages get a strict Content-Security-Policy.
 

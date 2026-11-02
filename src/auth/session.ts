@@ -9,6 +9,8 @@ type Tokens = { accessToken: string; tokenType: 'Bearer'; expiresIn: number };
  * the refresh token is an httpOnly cookie the browser sends to /api/v1/auth itself.
  */
 let accessToken: string | null = null;
+/** When the access token stops working (ms, client clock), with a margin for slow requests. */
+let expiresAt = 0;
 let refreshing: Promise<string | null> | null = null;
 const lostListeners = new Set<() => void>();
 
@@ -17,6 +19,18 @@ export function onSessionLost(listener: () => void): () => void {
   lostListeners.add(listener);
   return () => lostListeners.delete(listener);
 }
+
+/** Keeps a new access token and when it expires (the backend says how many seconds it lasts). */
+function keep(tokens: Tokens): string {
+  accessToken = tokens.accessToken;
+  // 30 s early, or halfway for very short-lived tokens (a test setup).
+  expiresAt = Date.now() + Math.max(tokens.expiresIn - 30, tokens.expiresIn / 2) * 1000;
+  return accessToken;
+}
+
+/** The access token, unless it has expired (or is about to). */
+const validToken = (): string | null =>
+  accessToken && Date.now() < expiresAt ? accessToken : null;
 
 const sessionLost = () => {
   accessToken = null;
@@ -31,9 +45,7 @@ const sessionLost = () => {
 export function refreshAccessToken(): Promise<string | null> {
   refreshing ??= withLock(async () => {
     try {
-      const tokens = await request<Tokens>(apiPath('/auth/refresh'), { method: 'POST' });
-      accessToken = tokens.accessToken;
-      return accessToken;
+      return keep(await request<Tokens>(apiPath('/auth/refresh'), { method: 'POST' }));
     } catch (err) {
       if (err instanceof ApiError && err.status === 401) {
         accessToken = null;
@@ -63,7 +75,7 @@ export async function api<T>(path: string, init: RequestInit = {}): Promise<T> {
       headers: { ...init.headers, Authorization: `Bearer ${token}` },
     });
 
-  const token = accessToken ?? (await refreshAccessToken());
+  const token = await currentToken();
   if (!token) {
     sessionLost();
     throw new ApiError(401, 'Unauthorized', 'You are not signed in', [], null);
@@ -81,9 +93,12 @@ export async function api<T>(path: string, init: RequestInit = {}): Promise<T> {
   }
 }
 
-/** The current access token, refreshed if needed (for requests made without `api`). */
+/**
+ * The current access token, refreshed first if it has expired. Uploads and the live run stream
+ * use it directly, without `api`'s retry on 401, so it must not hand out a stale token.
+ */
 export async function currentToken(): Promise<string | null> {
-  return accessToken ?? refreshAccessToken();
+  return validToken() ?? refreshAccessToken();
 }
 
 export async function signIn(email: string, password: string): Promise<Me> {
@@ -91,7 +106,7 @@ export async function signIn(email: string, password: string): Promise<Me> {
     method: 'POST',
     body: JSON.stringify({ email, password }),
   });
-  accessToken = tokens.accessToken;
+  keep(tokens);
   return api<Me>('/me');
 }
 

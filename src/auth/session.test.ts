@@ -1,6 +1,14 @@
 import { ApiError } from '../api/client';
 import { mockApi, problem } from '../test/mock-api';
-import { api, onSessionLost, refreshAccessToken, resetSession, signIn, signOut } from './session';
+import {
+  api,
+  currentToken,
+  onSessionLost,
+  refreshAccessToken,
+  resetSession,
+  signIn,
+  signOut,
+} from './session';
 
 const tokens = (n: number) =>
   [200, { accessToken: `access-${n}`, tokenType: 'Bearer', expiresIn: 900 }] as [number, unknown];
@@ -39,6 +47,23 @@ describe('session', () => {
     await expect(api('/sources')).resolves.toEqual({ data: [], nextCursor: null });
     expect(refreshes).toBe(1);
     expect(calls.filter((c) => c.path === '/api/v1/sources')).toHaveLength(2);
+  });
+
+  it('refreshes an expired access token before handing it to an upload or a live stream', async () => {
+    let refreshes = 0;
+    mockApi({
+      'POST /api/v1/auth/login': tokens(0),
+      'POST /api/v1/auth/refresh': () => tokens(++refreshes),
+      'GET /api/v1/me': [200, { id: 'u', email: 'operator@setu.local', role: 'operator' }],
+    });
+    await signIn('operator@setu.local', 'pw');
+    expect(await currentToken()).toBe('access-0');
+
+    const later = Date.now() + 16 * 60_000; // past the 15-minute lifetime
+    vi.spyOn(Date, 'now').mockReturnValue(later);
+    expect(await currentToken()).toBe('access-1');
+    expect(refreshes).toBe(1);
+    vi.restoreAllMocks();
   });
 
   it('ends the session when the refresh is refused', async () => {
