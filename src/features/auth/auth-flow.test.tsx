@@ -77,19 +77,19 @@ describe('signing in', () => {
 
 describe('menus by role', () => {
   it.each([
-    ['operator', ['Home', 'Sources', 'Runs', 'System status'], ['Quarantine', 'Records']],
-    ['reviewer', ['Home', 'System status'], ['Duplicate review', 'Records']],
-    ['approver', ['Home', 'Runs', 'Approvals', 'System status'], ['Records']],
-    ['auditor', ['Home', 'Runs', 'Reports', 'System status'], ['Records', 'Audit trail']],
-  ] as const)('shows the %s their own menu', async (role, links, coming) => {
+    ['operator', ['Home', 'Sources', 'Runs', 'Quarantine', 'Records', 'System status']],
+    ['reviewer', ['Home', 'Duplicate review', 'Records', 'System status']],
+    ['approver', ['Home', 'Runs', 'Approvals', 'Records', 'System status']],
+    ['auditor', ['Home', 'Runs', 'Reports', 'Records', 'Audit trail', 'System status']],
+    ['admin', ['Home', 'Sources', 'Runs', 'Quarantine', 'Records', 'Audit trail', 'System status']],
+  ] as const)('shows the %s their own menu', async (role, links) => {
     renderApp({ route: '/', user: userFor(role) });
     const nav = await screen.findByRole('navigation', { name: 'Main' });
     const names = within(nav)
       .getAllByRole('link')
       .map((l) => l.textContent);
     expect(names).toEqual(links);
-    const later = within(nav).getByRole('list', { name: 'Coming in later phases' });
-    for (const label of coming) expect(later).toHaveTextContent(label);
+    expect(within(nav).queryByRole('list', { name: 'Coming in later phases' })).toBeNull();
   });
 
   it('explains that a page is not for your role instead of showing it', async () => {

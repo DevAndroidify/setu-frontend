@@ -4,6 +4,12 @@ import { LoginPage } from '../features/auth/LoginPage';
 import { HomePage } from '../features/home/HomePage';
 import { NotFoundPage } from '../features/home/NotFoundPage';
 import { ApprovalsPage } from '../features/approvals/ApprovalsPage';
+import { AuditPage } from '../features/audit/AuditPage';
+import { MatchesPage } from '../features/matches/MatchesPage';
+import { FixRowPage } from '../features/quarantine/FixRowPage';
+import { QuarantinePage } from '../features/quarantine/QuarantinePage';
+import { PersonPage } from '../features/records/PersonPage';
+import { PersonsPage } from '../features/records/PersonsPage';
 import { MappingEditorPage } from '../features/mappings/MappingEditorPage';
 import { ReportPage } from '../features/reconciliation/ReportPage';
 import { ReportsPage } from '../features/reconciliation/ReportsPage';
@@ -67,6 +73,18 @@ export const routes: RouteObject[] = [
               {
                 path: 'approvals',
                 element: <RequireRole roles={['approver']}>{<ApprovalsPage />}</RequireRole>,
+              },
+              { path: 'quarantine', element: forSources(<QuarantinePage />) },
+              { path: 'quarantine/:entryId', element: forSources(<FixRowPage />) },
+              {
+                path: 'matches',
+                element: <RequireRole roles={['reviewer']}>{<MatchesPage />}</RequireRole>,
+              },
+              { path: 'persons', element: <PersonsPage /> },
+              { path: 'persons/:personId', element: <PersonPage /> },
+              {
+                path: 'audit',
+                element: <RequireRole roles={['auditor', 'admin']}>{<AuditPage />}</RequireRole>,
               },
               {
                 path: 'reports',

@@ -217,6 +217,14 @@ export function RunPage() {
         )}
         <Stages run={r} />
         <Outcomes run={r} />
+        {(role === 'operator' || role === 'admin') && r.progress.quarantined > 0 && (
+          <p>
+            <Link to={`/quarantine?runId=${r.id}`}>
+              See the {formatNumber(r.progress.quarantined)} quarantined rows
+            </Link>
+            {role === 'operator' && r.status === 'completed' && ' and fix them'}
+          </p>
+        )}
       </section>
       {r.mode === 'production' && <ApprovalHistory runId={r.id} />}
     </section>

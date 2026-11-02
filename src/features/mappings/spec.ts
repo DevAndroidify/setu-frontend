@@ -38,6 +38,17 @@ export const RULE_LABELS: Record<string, string> = {
 };
 
 export const targetLabel = (t: string) => TARGET_LABELS[t] ?? t;
+
+const HOUSEHOLD_KEYS: Record<string, string> = {
+  household_no: 'household.no',
+  local_unit_code: 'household.local_unit_code',
+  ward_no: 'household.ward_no',
+  tole: 'household.tole',
+};
+
+/** A normalized field ("dob_ad", "ward_no") as the label of the target it fills. */
+export const fieldLabel = (field: string) =>
+  targetLabel(HOUSEHOLD_KEYS[field] ?? `person.${field}`);
 export const transformLabel = (n: string) => TRANSFORM_LABELS[n] ?? n;
 export const ruleLabel = (n: string) => RULE_LABELS[n] ?? n;
 

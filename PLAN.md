@@ -56,13 +56,13 @@ The API was built for the pipeline; a few read endpoints a UI needs do not exist
 small, follows the existing module layout, and is added in the phase that first needs it,
 with tests, after you agree:
 
-| Phase | Endpoint                                                                                                      | Why                                                                                |
-| ----- | ------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------- |
-| F3    | `GET /sources`, `GET /sources/:id`, `GET /sources/:id/files` (added)                                          | List what has been registered and uploaded                                         |
-| F5    | `GET /runs?status=&sourceId=&cursor=` (added; `GET /runs/:id` now names its file, source and mapping version) | Runs list and the approver's "awaiting approval" queue                             |
-| F2    | `POST /auth/logout` (added: revokes the refresh token, clears the cookie)                                     | Real sign-out                                                                      |
-| F4    | `GET /mappings/catalog`, `POST /sources/:id/mappings/preview` (added)                                         | Offer exactly what the backend accepts; preview a draft without creating a version |
-| F7    | `PATCH /quarantine/:id`, `POST /quarantine/retry`                                                             | Fix and retry rows (already in the design, not built)                              |
+| Phase | Endpoint                                                                                                                                                                                   | Why                                                                                |
+| ----- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ---------------------------------------------------------------------------------- |
+| F3    | `GET /sources`, `GET /sources/:id`, `GET /sources/:id/files` (added)                                                                                                                       | List what has been registered and uploaded                                         |
+| F5    | `GET /runs?status=&sourceId=&cursor=` (added; `GET /runs/:id` now names its file, source and mapping version)                                                                              | Runs list and the approver's "awaiting approval" queue                             |
+| F2    | `POST /auth/logout` (added: revokes the refresh token, clears the cookie)                                                                                                                  | Real sign-out                                                                      |
+| F4    | `GET /mappings/catalog`, `POST /sources/:id/mappings/preview` (added)                                                                                                                      | Offer exactly what the backend accepts; preview a draft without creating a version |
+| F7    | `PATCH /quarantine/:id`, `POST /quarantine/retry`, `GET /quarantine/:id` (added: fixes are legacy values kept beside the raw row; passing rows reopen the run and load under its approval) | Fix and retry rows (already in the design, not built)                              |
 
 ## Phases
 
@@ -123,7 +123,7 @@ download for auditors; rollback with a confirmation that states what will be rem
 **Check:** the maker cannot approve their own run in the UI; an approved run starts; its
 reconciliation shows six matching checksums; rollback empties it again.
 
-### F7. Quarantine and duplicate review
+### F7. Quarantine and duplicate review (done)
 
 Quarantine list filtered by run and stage, each row with its raw values and every reason;
 fix-and-retry once the backend supports it. Duplicate review: the two records side by side
@@ -133,7 +133,7 @@ with a reason.
 **Check:** a reviewer works through the held rows of a run; decisions appear in the run's
 audit trail.
 
-### F8. Records and audit
+### F8. Records and audit (done)
 
 Person search (name, local unit) with paging; person page with household, BS and AD dates,
 unmask with reason (reviewer and auditor only); lineage for auditors; the audit trail with

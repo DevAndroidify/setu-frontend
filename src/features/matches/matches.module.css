@@ -1,0 +1,46 @@
+.card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  padding: var(--space-4);
+  margin-bottom: var(--space-4);
+  max-width: 60rem;
+}
+
+.cardHead {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: var(--space-3);
+  margin-bottom: var(--space-3);
+}
+
+.features {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-1);
+}
+
+.compare th[scope='row'] {
+  width: 12rem;
+}
+
+.compare td {
+  width: 40%;
+}
+
+.differs {
+  background: var(--color-warning-bg);
+}
+
+.differs th::after {
+  content: ' ≠';
+  color: var(--color-warning);
+}
+
+.decide {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  margin-top: var(--space-3);
+}

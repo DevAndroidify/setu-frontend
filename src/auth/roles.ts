@@ -28,10 +28,10 @@ export const NAV: NavItem[] = [
   { label: 'Runs', to: '/runs', roles: ['operator', 'approver', 'auditor', 'admin'] },
   { label: 'Approvals', to: '/approvals', roles: ['approver'] },
   { label: 'Reports', to: '/reports', roles: ['auditor'] },
-  { label: 'Quarantine', to: '/quarantine', roles: ['operator', 'admin'], phase: 'F7' },
-  { label: 'Duplicate review', to: '/matches', roles: ['reviewer'], phase: 'F7' },
-  { label: 'Records', to: '/persons', roles: ALL_ROLES, phase: 'F8' },
-  { label: 'Audit trail', to: '/audit', roles: ['auditor', 'admin'], phase: 'F8' },
+  { label: 'Quarantine', to: '/quarantine', roles: ['operator', 'admin'] },
+  { label: 'Duplicate review', to: '/matches', roles: ['reviewer'] },
+  { label: 'Records', to: '/persons', roles: ALL_ROLES },
+  { label: 'Audit trail', to: '/audit', roles: ['auditor', 'admin'] },
   { label: 'System status', to: '/status', roles: ALL_ROLES },
 ];
 
