@@ -225,6 +225,25 @@ describe('a run', () => {
     expect(api.calls.some((c) => c.path.endsWith('/events'))).toBe(true);
   });
 
+  it('reconnects when the live stream drops while the run is still going', async () => {
+    let streams = 0;
+    const paused = run({ status: 'paused', counts: { total: 1000 } });
+    const completed = run({ status: 'completed', counts: { total: 1000, valid: 880 } });
+    renderApp({
+      route: '/runs/run-12345678',
+      user: userFor('operator'),
+      handlers: {
+        'GET /api/v1/runs/run-12345678': () => [200, streams < 2 ? paused : completed],
+        // The first stream ends with the run still paused (a proxy timeout, an API restart).
+        'GET /api/v1/runs/run-12345678/events': () =>
+          ++streams === 1 ? eventStream([paused]) : eventStream([completed]),
+      },
+    });
+    expect(await screen.findByText('Paused')).toBeInTheDocument();
+    expect(await screen.findByText('Completed')).toBeInTheDocument();
+    expect(streams).toBe(2);
+  });
+
   it('shows why a production run is waiting, and that its maker cannot approve it', async () => {
     renderApp({
       route: '/runs/run-12345678',
