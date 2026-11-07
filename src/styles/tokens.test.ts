@@ -11,9 +11,7 @@ function theme(css: string): Record<string, string> {
     [...css.matchAll(/--(color-[\w-]+):\s*(#[0-9a-f]{6})/gi)].map((m) => [m[1]!, m[2]!]),
   );
 }
-const [lightCss = '', darkCss = ''] = tokensCss.split('@media (prefers-color-scheme: dark)');
-const light = theme(lightCss);
-const dark = { ...light, ...theme(darkCss) };
+const light = theme(tokensCss);
 
 /** WCAG 2 contrast ratio of two #rrggbb colours. */
 function contrast(a: string, b: string): number {
@@ -37,6 +35,14 @@ const PAIRS: [string, string][] = [
   ['color-link', 'color-surface'],
   ['color-link', 'color-bg'],
   ['color-on-brand', 'color-brand'],
+  ['color-on-brand', 'color-brand-dark'],
+  ['color-brand-text', 'color-surface'],
+  ['color-text', 'color-brand-tint'],
+  ['color-brand-text', 'color-brand-tint'],
+  ['color-accent', 'color-surface'],
+  ['color-accent', 'color-bg'],
+  ['color-accent', 'color-accent-tint'],
+  ['color-brand-text', 'color-hover'],
   ['color-success', 'color-success-bg'],
   ['color-danger', 'color-danger-bg'],
   ['color-warning', 'color-warning-bg'],
@@ -45,10 +51,8 @@ const PAIRS: [string, string][] = [
   ['color-text', 'color-danger-bg'],
 ];
 
-describe.each([
-  ['light', light],
-  ['dark', dark],
-])('%s theme', (_name, colours) => {
+describe('the colour theme', () => {
+  const colours = light;
   it.each(PAIRS)('keeps %s on %s readable (WCAG AA, 4.5:1)', (fg, bg) => {
     expect(colours[fg], fg).toBeDefined();
     expect(colours[bg], bg).toBeDefined();

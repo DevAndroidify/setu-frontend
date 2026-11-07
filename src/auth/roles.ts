@@ -24,15 +24,51 @@ export type NavItem = {
  */
 export const NAV: NavItem[] = [
   { label: 'Home', to: '/', roles: ALL_ROLES },
-  { label: 'Sources', to: '/sources', roles: ['operator', 'admin'] },
-  { label: 'Runs', to: '/runs', roles: ['operator', 'approver', 'auditor', 'admin'] },
-  { label: 'Approvals', to: '/approvals', roles: ['approver'] },
-  { label: 'Reports', to: '/reports', roles: ['auditor'] },
-  { label: 'Quarantine', to: '/quarantine', roles: ['operator', 'admin'] },
-  { label: 'Duplicate review', to: '/matches', roles: ['reviewer'] },
-  { label: 'Records', to: '/persons', roles: ALL_ROLES },
-  { label: 'Audit trail', to: '/audit', roles: ['auditor', 'admin'] },
-  { label: 'System status', to: '/status', roles: ALL_ROLES },
+  {
+    label: 'Sources',
+    to: '/sources',
+    roles: ['operator', 'admin'],
+  },
+  {
+    label: 'Runs',
+    to: '/runs',
+    roles: ['operator', 'approver', 'auditor', 'admin'],
+  },
+  {
+    label: 'Approvals',
+    to: '/approvals',
+    roles: ['approver'],
+  },
+  {
+    label: 'Reports',
+    to: '/reports',
+    roles: ['auditor'],
+  },
+  {
+    label: 'Quarantine',
+    to: '/quarantine',
+    roles: ['operator', 'admin'],
+  },
+  {
+    label: 'Duplicate review',
+    to: '/matches',
+    roles: ['reviewer'],
+  },
+  {
+    label: 'Records',
+    to: '/persons',
+    roles: ALL_ROLES,
+  },
+  {
+    label: 'Audit trail',
+    to: '/audit',
+    roles: ['auditor', 'admin'],
+  },
+  {
+    label: 'System status',
+    to: '/status',
+    roles: ALL_ROLES,
+  },
 ];
 
 export const navFor = (role: Role): NavItem[] => NAV.filter((item) => item.roles.includes(role));

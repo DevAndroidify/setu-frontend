@@ -1,7 +1,7 @@
 /*
- * Noto Sans Devanagari, served from our own build (no request leaves the site), for Nepali
- * text only: unicode-range keeps Latin text in the system font, and the browser downloads
- * these files only when a page shows Devanagari.
+ * Noto Sans for English and Noto Sans Devanagari for Nepali: one family, designed to match,
+ * served from our own build (no request leaves the site). unicode-range lets the browser
+ * download only the script a page actually shows.
  */
 @font-face {
   font-family: 'Setu Devanagari';
@@ -34,4 +34,48 @@
     format('woff2');
   unicode-range:
     U+0900-097F, U+1CD0-1CFF, U+200C-200D, U+20A8, U+20B9, U+25CC, U+A830-A839, U+A8E0-A8FF;
+}
+
+@font-face {
+  font-family: 'Setu Latin';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('@fontsource/noto-sans/files/noto-sans-latin-400-normal.woff2') format('woff2');
+  unicode-range:
+    U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329,
+    U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+  font-family: 'Setu Latin';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url('@fontsource/noto-sans/files/noto-sans-latin-600-normal.woff2') format('woff2');
+  unicode-range:
+    U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329,
+    U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+  font-family: 'Setu Latin';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url('@fontsource/noto-sans/files/noto-sans-latin-700-normal.woff2') format('woff2');
+  unicode-range:
+    U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329,
+    U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+  font-family: 'Setu Latin';
+  font-style: normal;
+  font-weight: 800;
+  font-display: swap;
+  src: url('@fontsource/noto-sans/files/noto-sans-latin-800-normal.woff2') format('woff2');
+  unicode-range:
+    U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329,
+    U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
 }

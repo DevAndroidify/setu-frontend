@@ -5,7 +5,7 @@
   align-items: center;
   justify-content: center;
   gap: var(--space-2);
-  min-height: 2.25rem;
+  min-height: 2.5rem;
   padding: 0 var(--space-4);
   border-radius: var(--radius);
   border: 1px solid transparent;
@@ -26,17 +26,17 @@
 }
 
 .primary:hover:not(:disabled) {
-  filter: brightness(1.1);
+  background: var(--color-brand-dark);
 }
 
 .secondary {
   background: var(--color-surface);
-  color: var(--color-text);
-  border-color: var(--color-border);
+  color: var(--color-brand-text);
+  border-color: var(--color-brand-text);
 }
 
 .secondary:hover:not(:disabled) {
-  background: var(--color-hover);
+  background: var(--color-brand-tint);
 }
 
 .danger {
@@ -73,7 +73,7 @@
 }
 
 .input {
-  min-height: 2.25rem;
+  min-height: 2.5rem;
   padding: var(--space-1) var(--space-3);
   border: 1px solid var(--color-border);
   border-radius: var(--radius);
@@ -92,6 +92,7 @@
 }
 
 .alert {
+  border-left-width: 4px !important;
   border-radius: var(--radius);
   padding: var(--space-3) var(--space-4);
   margin: 0 0 var(--space-4);
@@ -119,8 +120,8 @@
 }
 
 .alert-info {
-  background: var(--color-selected);
-  border-color: var(--color-border);
+  background: var(--color-brand-tint);
+  border-color: var(--color-brand-text);
 }
 
 .requestId {
@@ -190,6 +191,7 @@
   background: var(--color-surface);
   border: 1px solid var(--color-border);
   border-radius: var(--radius);
+  box-shadow: var(--shadow-card);
   font-size: var(--text-sm);
 }
 
@@ -202,13 +204,28 @@
 }
 
 .table th {
-  font-weight: 600;
-  color: var(--color-text-muted);
+  font-weight: 700;
+  color: var(--color-text);
   background: var(--color-bg);
+  border-bottom: 2px solid var(--color-border);
+}
+
+.table tbody tr:hover td {
+  background: var(--color-hover);
 }
 
 .table tr:last-child td {
   border-bottom: none;
+}
+
+/* In tables, links are the row's main way in: bold, underlined only on hover. */
+.table a {
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.table a:hover {
+  text-decoration: underline;
 }
 
 .tableWrap {
@@ -243,12 +260,26 @@
 }
 
 .pageHeader {
+  position: relative;
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: var(--space-4);
   flex-wrap: wrap;
-  margin-bottom: var(--space-4);
+  margin-bottom: var(--space-5);
+  padding-bottom: var(--space-3);
+  border-bottom: 1px solid var(--color-border);
+}
+
+/* A short crimson rule under the title, as on public service sites. */
+.pageHeader::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: -2px;
+  width: 4rem;
+  height: 3px;
+  background: var(--color-accent);
 }
 
 .pageHeader h1 {

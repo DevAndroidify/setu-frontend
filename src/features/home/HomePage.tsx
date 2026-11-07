@@ -1,37 +1,68 @@
 import { Link } from 'react-router';
 import { useAuth } from '../../auth/context';
-import { navFor, ROLE_LABELS } from '../../auth/roles';
-import type { Role } from '../../auth/session';
-
-const INTRO: Record<Role, string> = {
-  operator:
-    'Register legacy sources, upload their files and read the profile before writing a mapping.',
-  admin:
-    'Register sources and upload files like an operator. Approvals and unmasking are not part of this role.',
-  approver: 'Review production runs waiting for your approval, and roll back a run if needed.',
-  reviewer: 'Decide whether held records are the same person as one already in the register.',
-  auditor:
-    'Read reconciliation reports, trace records to their source rows and verify the audit trail.',
-};
+import { navFor } from '../../auth/roles';
+import { PageIcon } from '../../app/icons';
+import { useStrings } from '../../i18n/language';
+import styles from './home.module.css';
 
 export function HomePage() {
   const { user } = useAuth();
+  const t = useStrings();
   if (!user) return null;
   const shortcuts = navFor(user.role).filter((i) => i.to !== '/' && !i.phase);
+  const role = t.roles[user.role];
+  const [before, email, after] = t.home.signedInAs(user.email, role);
   return (
-    <section aria-labelledby="home-title">
-      <h1 id="home-title">Welcome</h1>
-      <p>
-        You are signed in as <strong>{user.email}</strong>, {ROLE_LABELS[user.role]}.
-      </p>
-      <p>{INTRO[user.role]}</p>
-      <ul>
-        {shortcuts.map((item) => (
-          <li key={item.to}>
-            <Link to={item.to}>{item.label}</Link>
-          </li>
-        ))}
-      </ul>
-    </section>
+    <>
+      <section className={styles.hero} aria-labelledby="home-title">
+        <p className={styles.eyebrow}>{role}</p>
+        <h1 id="home-title">{t.home.welcome}</h1>
+        <p>
+          {before}
+          <strong>{email}</strong>
+          {after}
+        </p>
+        <p>{t.home.intro[user.role]}</p>
+      </section>
+
+      <section aria-labelledby="services-title" className={styles.section}>
+        <h2 id="services-title" className={styles.sectionTitle}>
+          {t.home.services}
+        </h2>
+        <ul className={styles.cards}>
+          {shortcuts.map((item) => {
+            const [label, description] = t.nav[item.to] ?? [item.label, ''];
+            return (
+              <li key={item.to}>
+                <Link to={item.to} className={styles.card}>
+                  <span className={styles.cardIcon}>
+                    <PageIcon to={item.to} />
+                  </span>
+                  <span className={styles.cardTitle}>{label}</span>
+                  <span className={styles.cardText}>{description}</span>
+                  <span className={styles.cardArrow} aria-hidden="true">
+                    →
+                  </span>
+                </Link>
+              </li>
+            );
+          })}
+        </ul>
+      </section>
+
+      <section aria-labelledby="stages-title" className={styles.section}>
+        <h2 id="stages-title" className={styles.sectionTitle}>
+          {t.home.howItWorks}
+        </h2>
+        <ol className={styles.stages}>
+          {t.stages.map(([name, text]) => (
+            <li key={name} className={styles.stage}>
+              <span className={styles.stageName}>{name}</span>
+              <span className={styles.stageText}>{text}</span>
+            </li>
+          ))}
+        </ol>
+      </section>
+    </>
   );
 }

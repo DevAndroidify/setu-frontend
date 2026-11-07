@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <!-- Setu: a bridge (सेतु) over a crimson river line, on navy. Bold strokes stay clear at 16 px. -->
+  <rect width="64" height="64" rx="14" fill="#0b3c75"/>
+  <path d="M10 39c7-13 14-19 22-19s15 6 22 19" fill="none" stroke="#fff" stroke-width="5" stroke-linecap="round"/>
+  <path d="M8 40h48" stroke="#fff" stroke-width="5" stroke-linecap="round"/>
+  <path d="M21 40v-12M32 40v-18M43 40v-12" stroke="#fff" stroke-width="3.5" stroke-linecap="round"/>
+  <path d="M14 50h36" stroke="#e8364f" stroke-width="5" stroke-linecap="round"/>
+</svg>
