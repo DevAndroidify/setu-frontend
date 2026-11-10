@@ -6,10 +6,12 @@ import type {
   SelectHTMLAttributes,
   TextareaHTMLAttributes,
 } from 'react';
+import { Link } from 'react-router';
 import styles from './ui.module.css';
 
 type ButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & {
-  variant?: 'primary' | 'secondary' | 'danger' | 'ghost';
+  /** primary: navy; secondary: dark outline; link: underlined text; ghost: icon-like. */
+  variant?: 'primary' | 'secondary' | 'danger' | 'ghost' | 'link';
 };
 
 export function Button({ variant = 'primary', className, type = 'button', ...props }: ButtonProps) {
@@ -147,6 +149,30 @@ export function Alert({
   );
 }
 
+/**
+ * The fixed status colours: loaded is navy, held is amber, sent for review is a black outline,
+ * failed is red. A problem never looks like the brand colour.
+ */
+export type MarkKind = 'loaded' | 'held' | 'review' | 'failed';
+
+/** A small square in the status colour plus the word. The word carries the meaning. */
+export function StatusMark({ kind, children }: { kind: MarkKind; children: ReactNode }) {
+  return (
+    <span className={`${styles.mark} ${styles[`mark-${kind}`]}`}>
+      <span className={styles.markSquare} data-mark={kind} aria-hidden="true" />
+      {children}
+    </span>
+  );
+}
+
+const TONE_MARK: Record<'neutral' | 'success' | 'warning' | 'danger', MarkKind> = {
+  success: 'loaded',
+  warning: 'held',
+  danger: 'failed',
+  neutral: 'review',
+};
+
+/** Older name for a status marker, by tone: success, warning, danger or neutral. */
 export function Badge({
   tone = 'neutral',
   children,
@@ -154,18 +180,76 @@ export function Badge({
   tone?: 'neutral' | 'success' | 'warning' | 'danger';
   children: ReactNode;
 }) {
-  return <span className={`${styles.badge} ${styles[`badge-${tone}`]}`}>{children}</span>;
+  return <StatusMark kind={TONE_MARK[tone]}>{children}</StatusMark>;
 }
 
 export function EmptyState({ children }: { children: ReactNode }) {
   return <div className={styles.empty}>{children}</div>;
 }
 
-export function PageHeader({ title, actions }: { title: string; actions?: ReactNode }) {
+/**
+ * The page title block: a back link in muted text, the heading, a line of facts under it and
+ * the actions on the right, with a strong line underneath.
+ */
+export function PageHeader({
+  title,
+  back,
+  meta,
+  actions,
+}: {
+  title: ReactNode;
+  back?: { to: string; label: string };
+  meta?: ReactNode;
+  actions?: ReactNode;
+}) {
   return (
     <div className={styles.pageHeader}>
-      <h1>{title}</h1>
-      {actions}
+      <div className={styles.pageTitle}>
+        {back && (
+          <Link className={styles.backLink} to={back.to}>
+            <span aria-hidden="true">← </span>
+            {back.label}
+          </Link>
+        )}
+        <h1>{title}</h1>
+        {meta && <div className={styles.pageMeta}>{meta}</div>}
+      </div>
+      {actions && <div className={styles.pageActions}>{actions}</div>}
     </div>
+  );
+}
+
+export type Counter = { label: string; value: number; note?: ReactNode; highlight?: boolean };
+
+/** A row of numbers divided by thin lines. Only the important one is filled navy. */
+export function Counters({ label, items }: { label: string; items: Counter[] }) {
+  return (
+    <ul className={styles.counters} aria-label={label}>
+      {items.map((c) => (
+        <li
+          key={c.label}
+          className={c.highlight ? styles.counterHighlight : styles.counter}
+          data-highlight={c.highlight ? 'true' : undefined}
+        >
+          <span className={styles.counterLabel}>{c.label}</span>
+          <span className={styles.counterValue}>{c.value.toLocaleString('en-IN')}</span>
+          {c.note && <span className={styles.counterNote}>{c.note}</span>}
+        </li>
+      ))}
+    </ul>
+  );
+}
+
+/** A raw legacy value, column name or field code, shown exactly as written. */
+export function Raw({ children }: { children: ReactNode }) {
+  return <code className={styles.raw}>{children}</code>;
+}
+
+/** The one handwritten margin note per screen, in lower case. */
+export function MarginNote({ children }: { children: ReactNode }) {
+  return (
+    <p role="note" className={styles.marginNote}>
+      {children}
+    </p>
   );
 }
