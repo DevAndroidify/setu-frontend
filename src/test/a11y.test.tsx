@@ -276,7 +276,7 @@ const backend: Record<string, Handler> = {
 
 /** Each page, who sees it, and something on it to wait for before checking. */
 const PAGES: [string, Role | null, string, RegExp][] = [
-  ['sign in', null, '/login', /Sign in/],
+  ['sign in', null, '/login', /Old registers in/],
   ['home', 'operator', '/', /Welcome/],
   ['sources', 'operator', '/sources', /Sources/],
   ['new source', 'operator', '/sources/new', /New source/],

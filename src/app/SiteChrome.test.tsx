@@ -41,7 +41,7 @@ describe('language switch', () => {
   it('offers the switch on the sign-in page too', async () => {
     renderApp({ route: '/login' });
     await userEvent.click(await screen.findByRole('button', { name: 'नेपाली' }));
-    expect(screen.getByRole('heading', { level: 1, name: 'लगइन' })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { level: 2, name: 'लगइन' })).toBeInTheDocument();
     expect(screen.getByLabelText('पासवर्ड')).toBeInTheDocument();
   });
 });
