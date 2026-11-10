@@ -1,28 +1,14 @@
-.hero {
-  padding: var(--space-5);
-  background: var(--color-surface);
-  border: 1px solid var(--color-border);
-  border-left: 6px solid var(--color-accent);
-  box-shadow: var(--shadow-card);
-  border-radius: var(--radius);
+/* Home: who you are, your services as a list divided by lines, and the six stages. */
+
+.email {
+  color: var(--color-text);
+  font-weight: 500;
 }
 
-.hero p {
-  margin: 0 0 var(--space-2);
-}
-
-.hero p:last-child {
-  margin-bottom: 0;
-}
-
-.hero h1 {
-  margin-bottom: var(--space-3);
-}
-
-.eyebrow {
-  font-size: var(--text-sm);
-  font-weight: 700;
-  color: var(--color-brand-text);
+.intro {
+  margin: 0;
+  font-size: 1.125rem;
+  line-height: 1.6;
 }
 
 .section {
@@ -30,105 +16,55 @@
 }
 
 .sectionTitle {
-  position: relative;
-  margin: 0 0 var(--space-4);
-  padding-bottom: var(--space-2);
+  margin: 0 0 var(--space-3);
+  font-size: 1.375rem;
 }
 
-.sectionTitle::after {
-  content: '';
-  position: absolute;
-  left: 0;
-  bottom: 0;
-  width: 3rem;
-  height: 3px;
-  background: var(--color-accent);
-}
-
-.cards {
+.services {
   list-style: none;
   margin: 0;
   padding: 0;
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(15rem, 1fr));
-  gap: var(--space-4);
+  border-top: 1px solid var(--color-text);
 }
 
-.card {
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-2);
-  height: 100%;
-  padding: var(--space-5) var(--space-5) var(--space-6);
-  background: var(--color-surface);
-  border: 1px solid var(--color-border);
-  border-top: 3px solid var(--color-border);
-  border-radius: var(--radius);
-  box-shadow: var(--shadow-card);
+.services li {
+  border-bottom: 1px solid var(--color-border);
+}
+
+.service {
+  display: grid;
+  grid-template-columns: 1.75rem minmax(9rem, 14rem) minmax(0, 1fr) auto;
+  align-items: baseline;
+  gap: var(--space-2) var(--space-4);
+  padding: var(--space-4) 0;
   color: var(--color-text);
   text-decoration: none;
-  transition:
-    box-shadow 0.15s,
-    border-color 0.15s;
 }
 
-.card:hover {
-  border-top-color: var(--color-accent);
-  box-shadow: 0 6px 18px rgb(16 24 40 / 0.14);
+.service:hover {
+  background: var(--color-hover);
 }
 
-.cardIcon {
-  display: grid;
-  place-items: center;
-  width: 2.75rem;
-  height: 2.75rem;
-  margin-bottom: var(--space-1);
-  border-radius: var(--radius);
-  background: var(--color-brand-tint);
-  color: var(--color-brand-text);
-  transition:
-    background-color 0.15s,
-    color 0.15s;
-}
-
-.cardIcon svg {
-  width: 1.5rem;
-  height: 1.5rem;
-}
-
-.card:hover .cardIcon {
-  background: var(--color-accent-tint);
-  color: var(--color-accent);
-}
-
-.card:hover .cardTitle {
-  color: var(--color-accent);
-}
-
-.cardTitle {
-  font-size: var(--text-lg);
-  font-weight: 700;
+.serviceIcon {
+  width: 1.375rem;
+  height: 1.375rem;
+  align-self: center;
   color: var(--color-brand-text);
 }
 
-.cardText {
-  font-size: var(--text-sm);
+.serviceTitle {
+  font-size: 1.125rem;
+  font-weight: 600;
+}
+
+.serviceText {
   color: var(--color-text-muted);
 }
 
-.cardArrow {
-  position: absolute;
-  right: var(--space-4);
-  bottom: var(--space-3);
-  display: grid;
-  place-items: center;
-  width: 2rem;
-  height: 2rem;
-  border-radius: 50%;
-  border: 1px solid var(--color-border);
-  color: var(--color-accent);
-  font-weight: 700;
+.serviceArrow {
+  padding-right: var(--space-2);
+  color: var(--color-brand-text);
+  font-weight: 600;
 }
 
 .stages {
@@ -136,46 +72,39 @@
   margin: 0;
   padding: 0;
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(10rem, 1fr));
-  gap: var(--space-3);
-  counter-reset: stage;
+  grid-template-columns: repeat(auto-fit, minmax(9.375rem, 1fr));
 }
 
-.stage {
-  counter-increment: stage;
+.stages li {
   display: flex;
   flex-direction: column;
   gap: var(--space-1);
-  padding: var(--space-4);
-  background: var(--color-surface);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius);
+  padding: 0.875rem var(--space-4) 0.875rem 0;
+  border-top: 2px solid var(--color-text);
 }
 
-.stage::before {
-  content: counter(stage);
-  display: grid;
-  place-items: center;
-  width: 1.75rem;
-  height: 1.75rem;
-  margin-bottom: var(--space-1);
-  border-radius: 50%;
-  border: 2px solid var(--color-accent);
-  color: var(--color-accent);
-  font-size: var(--text-sm);
-  font-weight: 700;
-}
-
-/* Nepali numerals (१, २, ३ …) when the page is in Nepali. */
-:lang(ne) .stage::before {
-  content: counter(stage, devanagari);
+.stageNumber {
+  font-size: 1.625rem;
+  font-weight: 500;
+  color: var(--color-brand-text);
 }
 
 .stageName {
-  font-weight: 700;
+  font-weight: 600;
 }
 
 .stageText {
   font-size: var(--text-sm);
+  line-height: 1.45;
   color: var(--color-text-muted);
+}
+
+@media (max-width: 48rem) {
+  .service {
+    grid-template-columns: 1.75rem minmax(0, 1fr) auto;
+  }
+
+  .serviceText {
+    grid-column: 2 / 3;
+  }
 }

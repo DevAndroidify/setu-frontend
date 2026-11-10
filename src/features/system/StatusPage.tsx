@@ -1,4 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
+import { Alert, PageHeader, StatusMark } from '../../ui/controls';
+import ui from '../../ui/ui.module.css';
 import { getReadiness } from './readiness';
 import styles from './StatusPage.module.css';
 
@@ -19,19 +21,21 @@ export function StatusPage() {
 
   return (
     <section aria-labelledby="status-title">
-      <h1 id="status-title">System status</h1>
-      {readiness.isPending && <p className={styles.muted}>Checking…</p>}
+      <PageHeader title={<span id="status-title">System status</span>} />
+      {readiness.isPending && <p className={ui.muted}>Checking…</p>}
       {readiness.isError && (
-        <p role="alert" className={styles.alert}>
-          The API cannot be reached. Is the backend running on port 3000?
-        </p>
+        <Alert kind="error">
+          <p>The API cannot be reached. Is the backend running on port 3000?</p>
+        </Alert>
       )}
       {readiness.data && (
         <>
-          <p className={readiness.data.ok ? styles.ok : styles.alert} role="status">
-            {readiness.data.ok ? 'All services are up.' : 'Some services are down.'}
+          <p className={styles.summary} role="status">
+            <StatusMark kind={readiness.data.ok ? 'loaded' : 'failed'}>
+              {readiness.data.ok ? 'All services are up.' : 'Some services are down.'}
+            </StatusMark>
           </p>
-          <table className={styles.table}>
+          <table className={`${ui.table} ${styles.table}`}>
             <thead>
               <tr>
                 <th scope="col">Service</th>
@@ -43,10 +47,10 @@ export function StatusPage() {
                 <tr key={name}>
                   <td>{LABELS[name] ?? name}</td>
                   <td>
-                    <span className={check.status === 'up' ? styles.up : styles.down}>
+                    <StatusMark kind={check.status === 'up' ? 'loaded' : 'failed'}>
                       {check.status === 'up' ? 'Up' : 'Down'}
-                    </span>
-                    {check.error && <span className={styles.muted}> {check.error}</span>}
+                    </StatusMark>
+                    {check.error && <span className={ui.muted}> {check.error}</span>}
                   </td>
                 </tr>
               ))}
