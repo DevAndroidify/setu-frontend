@@ -3,7 +3,7 @@ import type { Role } from '../auth/session';
 /** Interface text for the site frame, sign-in and home page, in English and Nepali. */
 export const en = {
   skip: 'Skip to main content',
-  subtitle: 'Legacy Records Migration Portal',
+  subtitle: 'Legacy records migration',
   switchTo: 'नेपाली',
   switchToLang: 'ne',
   switchLabel: 'Switch to Nepali',
@@ -44,17 +44,6 @@ export const en = {
     '/status': ['System status', 'Check that the database, queue and file store are reachable.'],
   } as Record<string, [string, string]>,
   footer: {
-    about: 'About Setu',
-    aboutText:
-      'Setu moves records from legacy registers into a modern database, with proof at every step: profiles, validation, quarantine with reasons, lineage, reconciliation and a tamper-evident audit trail.',
-    stages: 'How a run works',
-    privacy: 'Data and privacy',
-    privacyPoints: [
-      'Every record here is synthetic',
-      'Citizenship numbers are masked by default',
-      'Unmasking needs a reason and is audited',
-      'Production loads need a second approver',
-    ],
     copyright: '© 2026 Setu. A portfolio project, not an official government website.',
   },
   stages: [
@@ -110,7 +99,7 @@ export type Strings = typeof en;
 
 export const ne: Strings = {
   skip: 'मुख्य सामग्रीमा जानुहोस्',
-  subtitle: 'पुरानो अभिलेख स्थानान्तरण प्रणाली',
+  subtitle: 'पुरानो अभिलेख स्थानान्तरण',
   switchTo: 'English',
   switchToLang: 'en',
   switchLabel: 'Switch to English',
@@ -151,17 +140,6 @@ export const ne: Strings = {
     '/status': ['प्रणाली स्थिति', 'डाटाबेस, लाइन र फाइल भण्डार चलिरहेको जाँच गर्नुहोस्।'],
   },
   footer: {
-    about: 'सेतुको बारेमा',
-    aboutText:
-      'सेतुले पुराना दर्ताका अभिलेखलाई आधुनिक डाटाबेसमा सार्छ, र हरेक चरणको प्रमाण राख्छ: विवरण, प्रमाणीकरण, कारणसहित क्वारेन्टाइन, स्रोत-सम्बन्ध, मिलान र छेडछाड पत्ता लाग्ने लेखापरीक्षण विवरण।',
-    stages: 'रन कसरी चल्छ',
-    privacy: 'तथ्याङ्क र गोपनीयता',
-    privacyPoints: [
-      'यहाँका सबै अभिलेख कृत्रिम हुन्',
-      'नागरिकता नम्बर पूर्वनिर्धारित रूपमा लुकाइन्छ',
-      'देखाउन कारण चाहिन्छ र त्यो अभिलेख हुन्छ',
-      'वास्तविक भण्डारणका लागि दोस्रो स्वीकृतकर्ता चाहिन्छ',
-    ],
     copyright: '© २०२६ सेतु। एक पोर्टफोलियो परियोजना, आधिकारिक सरकारी वेबसाइट होइन।',
   },
   stages: [

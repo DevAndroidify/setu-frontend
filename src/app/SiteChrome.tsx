@@ -2,26 +2,18 @@ import type { ReactNode } from 'react';
 import { setLanguage, useStrings } from '../i18n/language';
 import styles from './Layout.module.css';
 
-/** Setu's own mark: a bridge (सेतु) over a river line. Not a government emblem. */
-function Logo() {
+/** Setu's own mark: a bridge (सेतु) over a river line, on a dark square. Not a government emblem. */
+function Logo({ large }: { large?: boolean }) {
   return (
-    <svg className={styles.logo} viewBox="0 0 48 48" aria-hidden="true" focusable="false">
-      <circle cx="24" cy="24" r="23" fill="var(--color-brand)" />
-      <path
-        d="M8 29c5-9 11-13 16-13s11 4 16 13"
-        fill="none"
-        stroke="#fff"
-        strokeWidth="2.6"
-        strokeLinecap="round"
-      />
-      <path d="M7 30h34" stroke="#fff" strokeWidth="2.6" strokeLinecap="round" />
-      <path
-        d="M14 30v-6M19 30v-11M24 30v-14M29 30v-11M34 30v-6"
-        stroke="#fff"
-        strokeWidth="1.8"
-        strokeLinecap="round"
-      />
-      <path d="M11 35h26" stroke="var(--color-accent)" strokeWidth="2.6" strokeLinecap="round" />
+    <svg
+      className={large ? styles.logoLarge : styles.logo}
+      viewBox="0 0 34 34"
+      aria-hidden="true"
+      focusable="false"
+    >
+      <rect width="34" height="34" fill="var(--color-text)" />
+      <path d="M5 25 Q17 9 29 25" fill="none" stroke="var(--color-brand)" strokeWidth="3" />
+      <line x1="5" y1="25" x2="29" y2="25" stroke="#ffffff" strokeWidth="2" />
     </svg>
   );
 }
@@ -38,9 +30,6 @@ export function LanguageSwitch() {
       title={t.switchLabel}
       onClick={() => setLanguage(target)}
     >
-      <span aria-hidden="true" className={styles.languageIcon}>
-        अ/A
-      </span>
       {t.switchTo}
     </button>
   );
@@ -56,24 +45,35 @@ export function SkipLink() {
   );
 }
 
-/** The white header band with the mark and title; `children` sits on the right. */
-export function SiteHeader({ children }: { children?: ReactNode }) {
+/**
+ * The header: a 4px navy band, then the mark and "Setu". Signed in, the menu sits next to the
+ * mark (`nav`) and the user line on the right (`children`). On sign-in the mark is larger and
+ * carries the subtitle.
+ */
+export function SiteHeader({ nav, children }: { nav?: ReactNode; children?: ReactNode }) {
   const t = useStrings();
+  const large = !nav;
   return (
-    <header className={styles.header}>
-      <div className={`${styles.container} ${styles.headerInner}`}>
+    <header className={large ? `${styles.header} ${styles.headerLarge}` : styles.header}>
+      <div className={styles.headerStart}>
         {/* A plain link, not the router's: it reloads the app fresh on the home page. */}
         <a className={styles.identity} href="/">
-          <Logo />
-          <span>
+          <Logo large={large} />
+          <span className={styles.identityText}>
             <span className={styles.title}>
-              Setu <span lang="ne">सेतु</span>
+              Setu{' '}
+              {large && (
+                <span lang="ne" className={styles.titleNe}>
+                  सेतु
+                </span>
+              )}
             </span>
-            <span className={styles.subtitle}>{t.subtitle}</span>
+            {large && <span className={styles.subtitle}>{t.subtitle}</span>}
           </span>
         </a>
-        {children}
+        {nav}
       </div>
+      <div className={styles.headerEnd}>{children}</div>
     </header>
   );
 }
@@ -82,39 +82,7 @@ export function SiteFooter() {
   const t = useStrings();
   return (
     <footer className={styles.footer}>
-      <div className={`${styles.container} ${styles.footerColumns}`}>
-        <section aria-labelledby="footer-about">
-          <h2 id="footer-about" className={styles.footerHeading}>
-            {t.footer.about}
-          </h2>
-          <p>{t.footer.aboutText}</p>
-        </section>
-        <section aria-labelledby="footer-stages">
-          <h2 id="footer-stages" className={styles.footerHeading}>
-            {t.footer.stages}
-          </h2>
-          <ol className={styles.footerList}>
-            {t.stages.map(([name]) => (
-              <li key={name}>{name}</li>
-            ))}
-          </ol>
-        </section>
-        <section aria-labelledby="footer-privacy">
-          <h2 id="footer-privacy" className={styles.footerHeading}>
-            {t.footer.privacy}
-          </h2>
-          <ul className={styles.footerList}>
-            {t.footer.privacyPoints.map((p) => (
-              <li key={p}>{p}</li>
-            ))}
-          </ul>
-        </section>
-      </div>
-      <div className={styles.footerBottom}>
-        <div className={styles.container}>
-          <p>{t.footer.copyright}</p>
-        </div>
-      </div>
+      <p>{t.footer.copyright}</p>
     </footer>
   );
 }

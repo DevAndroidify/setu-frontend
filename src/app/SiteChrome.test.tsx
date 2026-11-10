@@ -22,15 +22,17 @@ describe('language switch', () => {
   it('shows the menu and home page in Nepali, then back in English', async () => {
     renderApp({ route: '/', user: userFor('operator') });
     const nav = await screen.findByRole('navigation', { name: 'Main' });
+    // The switch sits on the right of the header, next to the user line.
+    const banner = screen.getByRole('banner');
 
-    await userEvent.click(within(nav).getByRole('button', { name: 'नेपाली' }));
+    await userEvent.click(within(banner).getByRole('button', { name: 'नेपाली' }));
     expect(within(nav).getByRole('link', { name: 'गृहपृष्ठ' })).toBeInTheDocument();
     expect(screen.getByRole('heading', { level: 1, name: 'स्वागत छ' })).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'बाहिरिनुहोस्' })).toBeInTheDocument();
     expect(document.documentElement.lang).toBe('ne');
     expect(localStorage.getItem('setu.language')).toBe('ne');
 
-    await userEvent.click(within(nav).getByRole('button', { name: 'English' }));
+    await userEvent.click(within(banner).getByRole('button', { name: 'English' }));
     expect(within(nav).getByRole('link', { name: 'Home' })).toBeInTheDocument();
     expect(screen.getByRole('heading', { level: 1, name: 'Welcome' })).toBeInTheDocument();
     expect(document.documentElement.lang).toBe('en');

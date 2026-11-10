@@ -21,14 +21,20 @@ body {
 
 h1 {
   font-size: var(--text-xl);
-  line-height: 1.25;
+  font-weight: 600;
+  line-height: 1.2;
   margin: 0 0 var(--space-4);
-  color: var(--color-brand-text);
+  color: var(--color-text);
+}
+
+h2,
+h3 {
+  font-weight: 600;
+  color: var(--color-text);
 }
 
 h2 {
   font-size: var(--text-lg);
-  color: var(--color-brand-text);
 }
 
 p {
@@ -38,20 +44,14 @@ p {
 /* Links in text keep an underline (so they stand out without colour), drawn thin and low.
    :where() keeps these at zero specificity, so buttons and cards styled as links win. */
 :where(a) {
-  color: var(--color-link);
+  color: inherit;
   text-decoration-line: underline;
   text-decoration-thickness: 1px;
-  text-underline-offset: 0.2em;
-  text-decoration-color: color-mix(in srgb, currentColor 45%, transparent);
-  transition:
-    color 0.15s,
-    text-decoration-color 0.15s;
+  text-underline-offset: 4px;
 }
 
 :where(a:hover) {
-  color: var(--color-accent);
   text-decoration-thickness: 2px;
-  text-decoration-color: currentColor;
 }
 
 :focus-visible {
