@@ -2,11 +2,15 @@
 :root {
   /* One bright, light theme, also when the system is set to dark. */
   color-scheme: light;
-  /* Noto Sans (Latin) and Noto Sans Devanagari; each @font-face covers only its script. */
+  /* Jost for English; Nepali falls through to Mukta, then Noto (see fonts.css). */
   --font-sans:
-    'Setu Latin', 'Setu Devanagari', system-ui, -apple-system, 'Segoe UI', Roboto, 'Noto Sans',
-    'Nirmala UI', 'Mangal', sans-serif;
-  --font-mono: ui-monospace, 'SFMono-Regular', Consolas, monospace;
+    'Jost', 'Mukta', system-ui, -apple-system, 'Segoe UI', Roboto, 'Setu Devanagari', 'Nirmala UI',
+    'Mangal', sans-serif;
+  /* Raw legacy values, column names, field codes. */
+  --font-mono:
+    'IBM Plex Mono', 'Mukta', ui-monospace, 'SFMono-Regular', Consolas, 'Setu Devanagari', monospace;
+  /* The one handwritten margin note per screen. */
+  --font-hand: 'Caveat', cursive;
 
   --text-xs: 0.75rem;
   --text-sm: 0.875rem;
@@ -21,32 +25,42 @@
   --space-5: 1.5rem;
   --space-6: 2.5rem;
 
-  --radius: 4px;
-  --radius-pill: 999px;
+  /* Square corners and no shadows: sections are divided by 1px lines, not cards. */
+  --radius: 0;
+  --radius-pill: 0;
   --container: 80rem;
-  --shadow-card: 0 1px 2px rgb(16 24 40 / 0.06), 0 1px 3px rgb(16 24 40 / 0.1);
+  --shadow-card: none;
 
-  --color-bg: #f8fafc;
+  --color-bg: #ffffff;
+  /* Same as the page; sections are divided by lines. */
   --color-surface: #ffffff;
-  --color-text: #1a1f2b;
-  --color-text-muted: #525b6a;
-  --color-border: #dfe4ea;
-  --color-hover: #eaf0f7;
+  /* Text, and the strong lines between sections. */
+  --color-text: #0f1722;
+  --color-text-muted: #535d6b;
+  /* Light lines inside a section. */
+  --color-border: #dde3ea;
+  /* Hover rows, and the empty part of progress bars. */
+  --color-hover: #e8edf3;
   --color-selected: #dde8f6;
-  /* Navy for buttons and headings only; the frame is white with crimson accent lines. */
+  /* Navy: primary buttons, active tab underline, header top band, "Loaded". */
   --color-brand: #0b3c75;
   --color-brand-dark: #072a52;
   --color-brand-text: #0b3c75;
   --color-brand-tint: #eef3fa;
-  --color-accent: #c8102e;
-  --color-accent-tint: #fdf0f2;
+  /* The crimson accent is retired; the name stays so older styles turn navy, not red. */
+  --color-accent: #0b3c75;
+  --color-accent-tint: #eef3fa;
   --color-on-brand: #ffffff;
   --color-link: #0b55a8;
+  /* "Passes every check". */
   --color-success: #17693a;
   --color-success-bg: #e3f4e9;
+  /* Failed runs and errors only. A problem never looks like the brand colour. */
   --color-danger: #b42318;
   --color-danger-bg: #fde8e6;
-  --color-warning: #8a5a00;
-  --color-warning-bg: #fff4d6;
+  /* "Held" as text, held rows in tables, and held markers and bars. */
+  --color-warning: #8f5300;
+  --color-warning-bg: #fff6e8;
+  --color-held: #e08a00;
   --color-focus: #2f6fe0;
 }

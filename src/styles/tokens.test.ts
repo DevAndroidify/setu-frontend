@@ -51,11 +51,56 @@ const PAIRS: [string, string][] = [
   ['color-text', 'color-danger-bg'],
 ];
 
+/**
+ * Status markers and bars carry no text, so they need 3:1 against the page (WCAG 1.4.11).
+ * Not listed: color-held (#e08a00, about 2.7:1). The design pairs every amber marker with the
+ * word "Held" and every amber bar with its count, so the colour is never the only signal.
+ */
+const MARKERS: [string, string][] = [
+  ['color-brand', 'color-surface'],
+  ['color-text', 'color-surface'],
+];
+
 describe('the colour theme', () => {
   const colours = light;
   it.each(PAIRS)('keeps %s on %s readable (WCAG AA, 4.5:1)', (fg, bg) => {
     expect(colours[fg], fg).toBeDefined();
     expect(colours[bg], bg).toBeDefined();
     expect(contrast(colours[fg]!, colours[bg]!)).toBeGreaterThanOrEqual(4.5);
+  });
+
+  it.each(MARKERS)('keeps the %s marker visible on %s (3:1)', (fg, bg) => {
+    expect(colours[fg], fg).toBeDefined();
+    expect(contrast(colours[fg]!, colours[bg]!)).toBeGreaterThanOrEqual(3);
+  });
+
+  it('draws every corner square and every surface flat', () => {
+    expect(tokensCss).toMatch(/--radius:\s*0;/);
+    expect(tokensCss).toMatch(/--radius-pill:\s*0;/);
+    expect(tokensCss).toMatch(/--shadow-card:\s*none;/);
+  });
+});
+
+describe('the fonts', () => {
+  const fontsCss = readFileSync(join(process.cwd(), 'src/styles/fonts.css'), 'utf8');
+
+  it('serves every font from our own build, never from another site', () => {
+    expect(fontsCss).not.toMatch(/https?:\/\//);
+    for (const url of fontsCss.matchAll(/url\('([^']+)'\)/g)) {
+      expect(url[1]).toMatch(/^@fontsource\//);
+    }
+  });
+
+  it.each(['Jost', 'Mukta', 'IBM Plex Mono', 'Caveat', 'Setu Devanagari'])(
+    'declares the %s family',
+    (family) => {
+      expect(fontsCss).toContain(`font-family: '${family}';`);
+    },
+  );
+
+  it('sets English in Jost and lets Nepali fall through to Mukta, then Noto', () => {
+    expect(tokensCss).toMatch(
+      /--font-sans:\s*'Jost',\s*'Mukta',\s*system-ui,[^;]*'Setu Devanagari'/,
+    );
   });
 });
