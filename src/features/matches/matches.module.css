@@ -1,46 +1,211 @@
-.card {
-  background: var(--color-surface);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius);
-  padding: var(--space-4);
-  margin-bottom: var(--space-4);
-  max-width: 60rem;
-}
+/* Duplicate review: the pair on the left, how close and the decision on the right. */
 
-.cardHead {
+.pager {
   display: flex;
   flex-wrap: wrap;
-  justify-content: space-between;
-  gap: var(--space-3);
-  margin-bottom: var(--space-3);
+  gap: var(--space-4);
 }
 
-.features {
+.layout {
   display: flex;
   flex-wrap: wrap;
-  gap: var(--space-1);
+  margin-top: calc(-1 * var(--space-5));
+  border-bottom: 1px solid var(--color-text);
 }
 
-.compare th[scope='row'] {
-  width: 12rem;
+.compareWrap {
+  flex: 2 1 43.75rem;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1.125rem;
+  padding: var(--space-5) var(--space-5) var(--space-6) 0;
+  box-shadow: inset -1px 0 0 var(--color-text);
 }
 
-.compare td {
-  width: 40%;
+.compareWrap p {
+  margin: 0;
+  font-size: var(--text-sm);
 }
 
-.differs {
-  background: var(--color-warning-bg);
+.compare {
+  width: 100%;
+  min-width: 40rem;
+  border-collapse: collapse;
 }
 
-.differs th::after {
-  content: ' ≠';
+.compare thead th {
+  padding: 0 var(--space-4) 0.875rem;
+  text-align: left;
+  vertical-align: bottom;
+}
+
+.compare thead th:first-child {
+  width: 20%;
+  padding-left: 0;
+}
+
+.compare tbody th,
+.compare tbody td {
+  padding: 0.875rem var(--space-4);
+  border-top: 1px solid var(--color-border);
+  text-align: left;
+}
+
+.compare tbody th {
+  padding-left: 0;
+  font-weight: 400;
+  font-size: 0.9375rem;
+  color: var(--color-text-muted);
+}
+
+.compare td[lang='ne'] {
+  font-size: 1.1875rem;
+}
+
+.heldLabel,
+.registerLabel {
+  display: block;
+  font-size: 0.8125rem;
+  font-weight: 500;
+}
+
+.heldLabel {
   color: var(--color-warning);
 }
 
-.decide {
+.registerLabel {
+  color: var(--color-brand-text);
+}
+
+.sideName {
+  font-size: 1.125rem;
+  font-weight: 600;
+}
+
+/* The register's column is tinted. */
+.register {
+  background: var(--color-brand-tint);
+}
+
+.matchHead {
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: var(--color-text-muted);
+}
+
+.differs {
+  font-weight: 600;
+  color: var(--color-warning);
+}
+
+.m-same,
+.m-close,
+.m-different,
+.m-unknown {
+  font-size: var(--text-sm);
+  font-weight: 600;
+}
+
+.m-close,
+.m-unknown {
+  color: var(--color-text-muted);
+}
+
+.m-different {
+  color: var(--color-warning);
+}
+
+.side {
+  flex: 1 1 23.75rem;
+  min-width: 0;
   display: flex;
-  flex-wrap: wrap;
-  gap: var(--space-2);
-  margin-top: var(--space-3);
+  flex-direction: column;
+}
+
+.closeness,
+.decision {
+  display: flex;
+  flex-direction: column;
+  gap: 0.875rem;
+  padding: var(--space-5);
+}
+
+.closeness {
+  border-bottom: 1px solid var(--color-border);
+}
+
+.closeness h2,
+.decision h2 {
+  margin: 0;
+  font-size: 1.25rem;
+}
+
+.score {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-3);
+  margin: 0;
+}
+
+.scoreValue {
+  font-size: 4rem;
+  font-weight: 500;
+  line-height: 0.9;
+  font-variant-numeric: tabular-nums;
+}
+
+.feature {
+  display: flex;
+  flex-direction: column;
+  gap: 0.375rem;
+}
+
+.featureHead {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--space-3);
+  font-size: 0.9375rem;
+}
+
+.featureValue {
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+.featureBar {
+  height: 6px;
+  background: var(--color-hover);
+}
+
+.featureBar div {
+  height: 100%;
+  background: var(--color-brand);
+}
+
+.decision > div {
+  margin-bottom: 0;
+  max-width: none;
+}
+
+.wide {
+  width: 100%;
+}
+
+@media (max-width: 48rem) {
+  .layout {
+    margin-top: 0;
+  }
+
+  .compareWrap {
+    padding-right: 0;
+    box-shadow: none;
+    border-bottom: 1px solid var(--color-text);
+  }
+
+  .closeness,
+  .decision {
+    padding-left: 0;
+    padding-right: 0;
+  }
 }

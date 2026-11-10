@@ -302,7 +302,7 @@ const PAGES: [string, Role | null, string, RegExp][] = [
   ['reports', 'auditor', '/reports', /Reconciliation reports/],
   ['quarantine', 'operator', '/quarantine?runId=run-12345678', /Quarantine/],
   ['fix a row', 'operator', '/quarantine/41', /Row 128/],
-  ['duplicate review', 'reviewer', '/matches', /Duplicate review/],
+  ['duplicate review', 'reviewer', '/matches', /Is this the same person/],
   ['records', 'operator', '/persons', /Records/],
   ['person with lineage', 'auditor', '/persons/p-1', /Sita Thapa/],
   ['audit trail', 'auditor', '/audit', /Audit trail/],
