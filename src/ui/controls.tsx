@@ -219,7 +219,14 @@ export function PageHeader({
   );
 }
 
-export type Counter = { label: string; value: number; note?: ReactNode; highlight?: boolean };
+export type Counter = {
+  label: string;
+  value: number;
+  note?: ReactNode;
+  highlight?: boolean;
+  /** held: the number reads in amber text; muted: secondary, like "still to go". */
+  tone?: 'held' | 'muted';
+};
 
 /** A row of numbers divided by thin lines. Only the important one is filled navy. */
 export function Counters({ label, items }: { label: string; items: Counter[] }) {
@@ -232,7 +239,13 @@ export function Counters({ label, items }: { label: string; items: Counter[] }) 
           data-highlight={c.highlight ? 'true' : undefined}
         >
           <span className={styles.counterLabel}>{c.label}</span>
-          <span className={styles.counterValue}>{c.value.toLocaleString('en-IN')}</span>
+          <span
+            className={[styles.counterValue, c.tone && styles[`counter-${c.tone}`]]
+              .filter(Boolean)
+              .join(' ')}
+          >
+            {c.value.toLocaleString('en-IN')}
+          </span>
           {c.note && <span className={styles.counterNote}>{c.note}</span>}
         </li>
       ))}

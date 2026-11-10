@@ -228,7 +228,9 @@ describe('rollback', () => {
       user: userFor('operator'),
       handlers: handlers([200, completed]),
     });
-    expect(await screen.findByText('Production of register.csv')).toBeInTheDocument();
+    expect(
+      await screen.findByRole('heading', { level: 1, name: 'Household register' }),
+    ).toBeInTheDocument();
     await waitFor(() => expect(screen.getByText('Approval history')).toBeInTheDocument());
     expect(screen.queryByRole('button', { name: 'Roll back…' })).not.toBeInTheDocument();
   });

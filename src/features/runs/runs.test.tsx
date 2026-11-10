@@ -1,4 +1,4 @@
-import { screen, waitFor } from '@testing-library/react';
+import { screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import type { Handler } from '../../test/mock-api';
 import { renderApp, userFor } from '../../test/render';
@@ -220,7 +220,10 @@ describe('a run', () => {
     await userEvent.click(await screen.findByRole('button', { name: 'Start' }));
     expect(await screen.findByText('Completed')).toBeInTheDocument();
     expect(screen.getByText('880')).toBeInTheDocument();
-    expect(screen.getByText('100% of batches done')).toBeInTheDocument();
+    expect(screen.getByText(/5 of 5 batches done/)).toBeInTheDocument();
+    const counts = screen.getByRole('list', { name: 'Where the rows went' });
+    expect(within(counts).getByText('Passed every check').parentElement).toHaveTextContent('880');
+    expect(within(counts).getByText('Held with reasons').parentElement).toHaveTextContent('120');
     expect(screen.queryByRole('button', { name: 'Start' })).not.toBeInTheDocument();
     expect(api.calls.some((c) => c.path.endsWith('/events'))).toBe(true);
   });
@@ -260,5 +263,100 @@ describe('a run', () => {
       await screen.findByText(/cannot be approved by whoever created or submitted it/),
     ).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'Cancel run' })).toBeInTheDocument();
+  });
+
+  it('groups why rows are held and shows what Setu fixed on the way', async () => {
+    const held = (id: string, value: string) => ({
+      id,
+      runId: 'run-12345678',
+      rowNo: Number(id),
+      stage: 'transform',
+      reasons: [
+        { field: 'dob_ad', stage: 'transform', message: `bsToAd: ${value} is not a real BS date` },
+      ],
+      raw: {},
+      normalized: {},
+      corrected: null,
+      correctedAt: null,
+      resolvedAt: null,
+      createdAt: '2026-10-25T10:01:00Z',
+    });
+    renderApp({
+      route: '/runs/run-12345678',
+      user: userFor('operator'),
+      handlers: {
+        'GET /api/v1/runs/run-12345678': [
+          200,
+          run({
+            mode: 'production',
+            status: 'completed',
+            counts: { total: 10 },
+            progress: {
+              valid: 0,
+              quarantined: 2,
+              duplicate_review: 0,
+              loaded: 8,
+              linked: 0,
+              batches: { done: 1 },
+            },
+          }),
+        ],
+        'GET /api/v1/quarantine': [
+          200,
+          { data: [held('3', '2045-13-04'), held('7', '2046-14-01')], nextCursor: null },
+        ],
+        'GET /api/v1/mappings/map-1': [
+          200,
+          {
+            id: 'map-1',
+            sourceId: 'src-1',
+            version: 2,
+            createdBy: 'u',
+            createdAt: '2026-10-25T09:00:00Z',
+            spec: {
+              fields: [
+                {
+                  target: 'person.dob_ad',
+                  from: ['dob'],
+                  transforms: [{ name: 'bsToAd' }],
+                  rules: [],
+                  onError: 'quarantine',
+                },
+              ],
+            },
+          },
+        ],
+        'POST /api/v1/mappings/map-1/preview': [
+          200,
+          {
+            mappingId: 'map-1',
+            version: 2,
+            sourceFileId: 'file-1',
+            summary: { rows: 1, valid: 1, quarantined: 0 },
+            rows: [
+              {
+                rowNo: 1,
+                raw: { dob: '2080/11/17' },
+                values: { dob_ad: '2024-02-29' },
+                warnings: [],
+                errors: [],
+                status: 'valid',
+              },
+            ],
+          },
+        ],
+      },
+    });
+    const heldSection = await screen.findByRole('region', { name: 'Why 2 rows are held' });
+    const reason = await within(heldSection).findByText('is not a real BS date');
+    expect(reason.closest('li')).toHaveTextContent('dob_ad is not a real BS date2');
+    expect(within(heldSection).getByRole('link', { name: 'Open quarantine' })).toHaveAttribute(
+      'href',
+      '/quarantine?runId=run-12345678',
+    );
+    const fixed = await screen.findByRole('region', { name: 'What Setu fixed on the way' });
+    expect(within(fixed).getByText('Bikram Sambat to AD')).toBeInTheDocument();
+    expect(within(fixed).getByText('2080/11/17')).toBeInTheDocument();
+    expect(within(fixed).getByText('2024-02-29')).toBeInTheDocument();
   });
 });

@@ -17,6 +17,23 @@ export const STATUS: Record<
   rolled_back: { label: 'Rolled back', tone: 'neutral' },
 };
 
+/**
+ * The status marker for each run status, in the fixed colours: navy when it is going or done,
+ * amber never (no rows are held by a status), red only when it failed, an outline otherwise.
+ */
+export const STATUS_MARK: Record<RunStatus, 'loaded' | 'review' | 'failed'> = {
+  draft: 'review',
+  awaiting_approval: 'review',
+  approved: 'loaded',
+  queued: 'review',
+  running: 'loaded',
+  paused: 'review',
+  cancelled: 'review',
+  completed: 'loaded',
+  failed: 'failed',
+  rolled_back: 'review',
+};
+
 export const MODE: Record<RunMode, string> = { dry_run: 'Dry run', production: 'Production' };
 
 export const ACTION_LABELS: Record<RunAction, string> = {

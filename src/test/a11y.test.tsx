@@ -291,7 +291,7 @@ const PAGES: [string, Role | null, string, RegExp][] = [
   ['mapping version', 'operator', '/sources/src-1/mappings/map-1', /Mapping version 2/],
   ['runs', 'operator', '/runs', /Runs/],
   ['new run', 'operator', '/runs/new?sourceId=src-1', /New run/],
-  ['run waiting for approval', 'approver', '/runs/run-12345678', /Production of register\.csv/],
+  ['run waiting for approval', 'approver', '/runs/run-12345678', /Household register/],
   ['approvals', 'approver', '/approvals', /Approvals/],
   [
     'reconciliation report',
