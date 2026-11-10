@@ -24,10 +24,14 @@ h1 {
   font-weight: 600;
   line-height: 1.2;
   margin: 0 0 var(--space-4);
-  color: var(--color-text);
+  color: var(--color-heading);
 }
 
-h2,
+h2 {
+  font-weight: 600;
+  color: var(--color-heading);
+}
+
 h3 {
   font-weight: 600;
   color: var(--color-text);
@@ -44,14 +48,20 @@ p {
 /* Links in text keep an underline (so they stand out without colour), drawn thin and low.
    :where() keeps these at zero specificity, so buttons and cards styled as links win. */
 :where(a) {
-  color: inherit;
+  color: var(--color-link);
   text-decoration-line: underline;
   text-decoration-thickness: 1px;
   text-underline-offset: 4px;
 }
 
 :where(a:hover) {
+  color: var(--color-brand-dark);
   text-decoration-thickness: 2px;
+}
+
+/* Nepali names and lines read in crimson where they sit beside English. */
+:where(:lang(en) [lang='ne']) {
+  color: var(--color-accent);
 }
 
 :focus-visible {

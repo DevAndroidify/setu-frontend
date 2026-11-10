@@ -49,6 +49,9 @@ const PAIRS: [string, string][] = [
   ['color-text', 'color-selected'],
   ['color-text', 'color-warning-bg'],
   ['color-text', 'color-danger-bg'],
+  ['color-heading', 'color-surface'],
+  ['color-heading', 'color-brand-tint'],
+  ['color-link', 'color-hover'],
 ];
 
 /**

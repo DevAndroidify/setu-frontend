@@ -175,6 +175,10 @@
   height: 0.6875rem;
 }
 
+.mark-loaded {
+  color: var(--color-brand-text);
+}
+
 .mark-loaded .markSquare {
   background: var(--color-brand);
 }
@@ -254,7 +258,7 @@
 /* In tables, links are the row's main way in: underlined, thicker on hover. */
 .table a {
   font-weight: 500;
-  color: inherit;
+  color: var(--color-link);
 }
 
 .tableWrap {
@@ -358,7 +362,7 @@
 
 .backLink {
   align-self: flex-start;
-  color: var(--color-text-muted);
+  color: var(--color-link);
   font-size: 0.9375rem;
 }
 

@@ -47,10 +47,13 @@
   --color-brand-dark: #072a52;
   --color-brand-text: #0b3c75;
   --color-brand-tint: #eef3fa;
-  /* The crimson accent is retired; the name stays so older styles turn navy, not red. */
-  --color-accent: #0b3c75;
-  --color-accent-tint: #eef3fa;
+  /* Headings in navy, so pages are not all one dark colour. */
+  --color-heading: #0b3c75;
+  /* Nepal crimson, for Nepali text and small labels only: never for a status or a problem. */
+  --color-accent: #a3122a;
+  --color-accent-tint: #fdf0f2;
   --color-on-brand: #ffffff;
+  /* Links in text and tables. */
   --color-link: #0b55a8;
   /* "Passes every check". */
   --color-success: #17693a;

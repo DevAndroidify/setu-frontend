@@ -55,6 +55,7 @@
 .serviceTitle {
   font-size: 1.125rem;
   font-weight: 600;
+  color: var(--color-brand-text);
 }
 
 .serviceText {
@@ -91,6 +92,7 @@
 
 .stageName {
   font-weight: 600;
+  color: var(--color-heading);
 }
 
 .stageText {
