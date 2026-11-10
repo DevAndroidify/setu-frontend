@@ -1,24 +1,19 @@
-.crumbs {
-  margin: 0 0 var(--space-2);
-  font-size: var(--text-sm);
-  color: var(--color-text-muted);
-}
-
 .balance {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
   gap: var(--space-3);
-  padding: var(--space-4);
-  background: var(--color-surface);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius);
+  padding: var(--space-4) 0;
+  border-top: 1px solid var(--color-text);
+  border-bottom: 1px solid var(--color-text);
   max-width: 64rem;
 }
 
 .balance strong {
   display: block;
-  font-size: var(--text-lg);
+  font-size: 1.75rem;
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
 }
 
 .balance span span {

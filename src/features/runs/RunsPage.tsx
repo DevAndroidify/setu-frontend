@@ -1,14 +1,14 @@
 import { useInfiniteQuery } from '@tanstack/react-query';
 import { Link, useSearchParams } from 'react-router';
 import { useAuth } from '../../auth/context';
-import { Badge, Button, EmptyState, PageHeader } from '../../ui/controls';
+import { Button, EmptyState, PageHeader, StatusMark } from '../../ui/controls';
 import { ProblemMessage } from '../../ui/ProblemMessage';
 import { Spinner } from '../../ui/Spinner';
 import ui from '../../ui/ui.module.css';
 import { formatDateTime, formatNumber } from '../sources/format';
 import { ACTIVE, FINISHED, listRuns, type RunStatus } from './api';
 import styles from './runs.module.css';
-import { MODE, STATUS } from './status';
+import { MODE, STATUS, STATUS_MARK } from './status';
 
 const FILTERS: { id: string; label: string; statuses?: RunStatus[] }[] = [
   { id: 'all', label: 'All' },
@@ -88,7 +88,7 @@ export function RunsPage() {
                   </td>
                   <td>{MODE[r.mode]}</td>
                   <td>
-                    <Badge tone={STATUS[r.status].tone}>{STATUS[r.status].label}</Badge>
+                    <StatusMark kind={STATUS_MARK[r.status]}>{STATUS[r.status].label}</StatusMark>
                   </td>
                   <td>
                     {r.counts.total === undefined ? (

@@ -198,6 +198,9 @@ export function FixRowPage() {
                           </label>
                         ) : c.failing && corrected !== undefined ? (
                           <Raw>{show(corrected)}</Raw>
+                        ) : c.failing ? (
+                          // A fix is needed here, but cannot be made now (run not completed, role).
+                          <span className={ui.muted}>—</span>
                         ) : (
                           <span className={ui.muted}>{t.noChange}</span>
                         )}
