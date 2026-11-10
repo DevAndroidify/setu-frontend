@@ -4,6 +4,7 @@ import { Navigate, useNavigate, useSearchParams } from 'react-router';
 import { ApiError } from '../../api/client';
 import { useAuth } from '../../auth/context';
 import { ALL_ROLES } from '../../auth/roles';
+import type { Role } from '../../auth/session';
 import { Alert, Button, MarginNote, StatusMark, TextField } from '../../ui/controls';
 import type { MarkKind } from '../../ui/controls';
 import { ProblemMessage } from '../../ui/ProblemMessage';
@@ -37,9 +38,27 @@ export function LoginPage() {
   const [password, setPassword] = useState('');
   const [error, setError] = useState<unknown>(null);
   const [busy, setBusy] = useState(false);
+  const [demoRole, setDemoRole] = useState<Role | null>(null);
+  const [demoError, setDemoError] = useState<unknown>(null);
   const next = safeNext(params.get('next'));
+  // Visitors may sign in as any role without a password: always while developing, and in a
+  // public showcase build. The backend must allow it too (DEMO_MODE=true).
+  const demoMode = import.meta.env.DEV || import.meta.env.VITE_DEMO_MODE === 'true';
 
   if (auth.status === 'signedIn') return <Navigate to={next} replace />;
+
+  async function tryAs(role: Role) {
+    setDemoRole(role);
+    setDemoError(null);
+    try {
+      await auth.signInAsDemo(role);
+      navigate(next, { replace: true });
+    } catch (err) {
+      setDemoError(err);
+    } finally {
+      setDemoRole(null);
+    }
+  }
 
   async function submit(event: FormEvent) {
     event.preventDefault();
@@ -117,6 +136,38 @@ export function LoginPage() {
           <h2 id="login-title" className={styles.formTitle}>
             {t.title}
           </h2>
+          {demoMode && (
+            <section className={styles.try} aria-labelledby="login-try">
+              <h3 id="login-try" className={styles.demoTitle}>
+                {t.tryTitle}
+              </h3>
+              <p className={styles.tryText}>{t.tryText}</p>
+              {demoError !== null &&
+                (demoError instanceof ApiError && demoError.status === 404 ? (
+                  <Alert kind="error">
+                    <p>{t.tryOff}</p>
+                  </Alert>
+                ) : (
+                  <ProblemMessage error={demoError} title={t.tryFailed} />
+                ))}
+              <ul className={styles.tryList}>
+                {ALL_ROLES.map((role) => (
+                  <li key={role}>
+                    <Button
+                      variant={role === 'operator' ? 'primary' : 'secondary'}
+                      className={styles.tryButton}
+                      disabled={demoRole !== null}
+                      onClick={() => void tryAs(role)}
+                    >
+                      {demoRole === role ? t.tryBusy : t.tryAs(strings.roles[role])}
+                    </Button>
+                    <span className={styles.tryRole}>{strings.home.intro[role]}</span>
+                  </li>
+                ))}
+              </ul>
+              <h3 className={styles.orForm}>{t.orForm}</h3>
+            </section>
+          )}
           <form className={styles.form} onSubmit={submit} aria-labelledby="login-title" noValidate>
             {auth.status === 'signedOut' && auth.expired && !error && (
               <Alert kind="info">
@@ -155,7 +206,7 @@ export function LoginPage() {
             <p className={styles.lockout}>{t.lockout}</p>
           </form>
 
-          {import.meta.env.DEV && (
+          {import.meta.env.DEV && !demoMode && (
             <section className={styles.demo} aria-labelledby="login-demo">
               <h3 id="login-demo" className={styles.demoTitle}>
                 {t.demoTitle}

@@ -1,5 +1,8 @@
-import { screen, within } from '@testing-library/react';
-import { renderApp } from '../../test/render';
+import { screen, waitFor, within } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+import { renderApp, userFor } from '../../test/render';
+
+afterEach(() => vi.unstubAllGlobals());
 
 describe('the sign-in page', () => {
   it('explains where every row ends up before asking you to sign in', async () => {
@@ -28,17 +31,57 @@ describe('the sign-in page', () => {
     ).toBeInTheDocument();
   });
 
-  it('lists one demo account per role while developing', async () => {
+  it('signs a visitor in as a role with one click on a public demo', async () => {
+    vi.stubEnv('VITE_DEMO_MODE', 'true');
+    const { api, router } = renderApp({
+      route: '/login',
+      handlers: {
+        'POST /api/v1/auth/demo': [
+          200,
+          { accessToken: 'demo-1', tokenType: 'Bearer', expiresIn: 900 },
+        ],
+        'GET /api/v1/me': [200, userFor('reviewer')],
+      },
+    });
+    const demo = await screen.findByRole('region', { name: 'Look around as any role' });
+    // The ordinary form stays for real accounts.
+    expect(screen.getByRole('form', { name: 'Sign in' })).toBeInTheDocument();
+    await userEvent.click(within(demo).getByRole('button', { name: 'Sign in as Reviewer' }));
+    await waitFor(() => expect(router.state.location.pathname).toBe('/'));
+    expect(api.calls.find((c) => c.path === '/api/v1/auth/demo')!.body).toEqual({
+      role: 'reviewer',
+    });
+    vi.unstubAllEnvs();
+  });
+
+  it('offers no password-free sign-in in a production build that is not a public demo', async () => {
+    vi.stubEnv('DEV', false);
+    vi.stubEnv('VITE_DEMO_MODE', '');
     renderApp({ route: '/login' });
-    const demo = await screen.findByRole('region', { name: 'Demo accounts, one per role' });
-    for (const email of [
-      'operator@setu.local',
-      'reviewer@setu.local',
-      'approver@setu.local',
-      'auditor@setu.local',
-      'admin@setu.local',
-    ]) {
-      expect(within(demo).getByText(email)).toBeInTheDocument();
+    await screen.findByRole('form', { name: 'Sign in' });
+    expect(screen.queryByRole('button', { name: /Sign in as/ })).not.toBeInTheDocument();
+    vi.unstubAllEnvs();
+  });
+
+  it('offers one-click sign-in for every role while developing', async () => {
+    renderApp({ route: '/login' });
+    const demo = await screen.findByRole('region', { name: 'Look around as any role' });
+    for (const role of ['Operator', 'Reviewer', 'Approver', 'Auditor', 'Administrator']) {
+      expect(within(demo).getByRole('button', { name: `Sign in as ${role}` })).toBeEnabled();
     }
+  });
+
+  it('says how to turn demo sign-in on when the backend has it off', async () => {
+    renderApp({
+      route: '/login',
+      handlers: {
+        'POST /api/v1/auth/demo': [
+          404,
+          { type: 'about:blank', title: 'Not Found', status: 404, detail: 'Cannot POST' },
+        ],
+      },
+    });
+    await userEvent.click(await screen.findByRole('button', { name: 'Sign in as Operator' }));
+    expect(await screen.findByRole('alert')).toHaveTextContent('DEMO_MODE=true');
   });
 });

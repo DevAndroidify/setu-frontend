@@ -110,6 +110,19 @@ export async function signIn(email: string, password: string): Promise<Me> {
   return api<Me>('/me');
 }
 
+/**
+ * Public demo only: signs in as the seeded account of a role, without a password. The backend
+ * answers 404 unless it runs with DEMO_MODE=true.
+ */
+export async function signInAsDemo(role: Role): Promise<Me> {
+  const tokens = await request<Tokens>(apiPath('/auth/demo'), {
+    method: 'POST',
+    body: JSON.stringify({ role }),
+  });
+  keep(tokens);
+  return api<Me>('/me');
+}
+
 /** Ends the session on the server (revokes the refresh token) and forgets the access token. */
 export async function signOut(): Promise<void> {
   accessToken = null;

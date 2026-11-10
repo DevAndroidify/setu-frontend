@@ -2,7 +2,16 @@ import { useQueryClient } from '@tanstack/react-query';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import type { ReactNode } from 'react';
 import { AuthContext, type AuthState } from './context';
-import { api, type Me, onSessionLost, refreshAccessToken, signIn, signOut } from './session';
+import {
+  api,
+  type Me,
+  onSessionLost,
+  refreshAccessToken,
+  type Role,
+  signIn,
+  signInAsDemo,
+  signOut,
+} from './session';
 
 /**
  * Knows who is signed in. On load it tries the refresh cookie, so a reload keeps the session;
@@ -36,6 +45,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setState({ status: 'signedIn', user });
   }, []);
 
+  const doSignInAsDemo = useCallback(async (role: Role) => {
+    const user = await signInAsDemo(role);
+    setState({ status: 'signedIn', user });
+  }, []);
+
   const doSignOut = useCallback(async () => {
     await signOut();
     queryClient.clear();
@@ -43,8 +57,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, [queryClient]);
 
   const value = useMemo(
-    () => ({ ...state, signIn: doSignIn, signOut: doSignOut }),
-    [state, doSignIn, doSignOut],
+    () => ({ ...state, signIn: doSignIn, signInAsDemo: doSignInAsDemo, signOut: doSignOut }),
+    [state, doSignIn, doSignInAsDemo, doSignOut],
   );
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }

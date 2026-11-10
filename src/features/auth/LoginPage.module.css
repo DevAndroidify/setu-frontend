@@ -33,8 +33,8 @@
 
 .eyebrow {
   font-size: 0.9375rem;
-  font-weight: 500;
-  color: var(--color-brand-text);
+  font-weight: 600;
+  color: var(--color-accent);
 }
 
 .headline {
@@ -49,7 +49,7 @@
   font-family: 'Mukta', var(--font-sans);
   font-size: 1.5rem;
   line-height: 1.4;
-  color: var(--color-text-muted);
+  color: var(--color-accent);
 }
 
 .about {
@@ -103,9 +103,7 @@
   font-weight: 600;
 }
 
-/* The word next to the marker reads in full text colour here, also for "Held". */
 .placeName > span {
-  color: var(--color-text);
   font-weight: 600;
 }
 
@@ -141,6 +139,7 @@
 
 .stageName {
   font-weight: 600;
+  color: var(--color-heading);
 }
 
 .stageText {
@@ -184,6 +183,51 @@
   font-size: var(--text-sm);
   line-height: 1.5;
   color: var(--color-text-muted);
+}
+
+/* Public demo: one button per role above the ordinary form. */
+
+.try {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.tryText {
+  margin: 0;
+  font-size: 0.9375rem;
+  line-height: 1.5;
+  color: var(--color-text-muted);
+}
+
+.tryList {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  border-top: 1px solid var(--color-text);
+}
+
+.tryList li {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  padding: var(--space-3) 0;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.tryButton {
+  width: 100%;
+}
+
+.tryRole {
+  font-size: var(--text-sm);
+  line-height: 1.45;
+  color: var(--color-text-muted);
+}
+
+.orForm {
+  margin: var(--space-3) 0 0;
+  font-size: 1.0625rem;
 }
 
 .demo {

@@ -1,5 +1,5 @@
 import { createContext, useContext } from 'react';
-import type { Me } from './session';
+import type { Me, Role } from './session';
 
 export type AuthState =
   | { status: 'loading'; user: null }
@@ -8,6 +8,8 @@ export type AuthState =
 
 export type AuthContextValue = AuthState & {
   signIn: (email: string, password: string) => Promise<void>;
+  /** Public demo only: sign in as a role's seeded account (see VITE_DEMO_MODE). */
+  signInAsDemo: (role: Role) => Promise<void>;
   signOut: () => Promise<void>;
 };
 

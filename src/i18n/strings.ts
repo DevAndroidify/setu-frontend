@@ -93,6 +93,15 @@ export const en = {
       'Setu reads files from old government systems, fixes Preeti text, Bikram Sambat dates and old addresses, and loads each person into one modern register. Every row ends up somewhere you can see.',
     stagesTitle: 'How a run works',
     lockout: 'Five wrong passwords lock the account for 15 minutes.',
+    tryTitle: 'Look around as any role',
+    tryText:
+      'No password needed. Each role sees its own menu and can do what that officer could. Every record here is made up.',
+    tryAs: (role: string) => `Sign in as ${role}`,
+    tryBusy: 'Signing in…',
+    tryFailed: 'Could not start the demo',
+    tryOff:
+      'Demo sign-in is switched off on the server. Set DEMO_MODE=true in the backend’s .env, run npm run db:seed, and restart the API.',
+    orForm: 'Or sign in with an account',
     demoTitle: 'Demo accounts, one per role',
     demoPassword: 'The password is SEED_PASSWORD in your .env file.',
     note: 'every record in here is made up. no real person’s data.',
@@ -336,6 +345,15 @@ export const ne: Strings = {
       'सेतुले पुराना सरकारी प्रणालीका फाइल पढ्छ, प्रीति अक्षर, विक्रम संवत् मिति र पुराना ठेगाना सच्याउँछ, र हरेक व्यक्तिलाई एउटै आधुनिक दर्तामा राख्छ। हरेक पङ्क्ति तपाईंले देख्न सक्ने ठाउँमा पुग्छ।',
     stagesTitle: 'रन कसरी चल्छ',
     lockout: 'पाँच पटक गलत पासवर्ड हालेमा खाता १५ मिनेटका लागि बन्द हुन्छ।',
+    tryTitle: 'जुनसुकै भूमिकामा हेर्नुहोस्',
+    tryText:
+      'पासवर्ड चाहिँदैन। हरेक भूमिकाले आफ्नै मेनु देख्छ र त्यो अधिकारीले गर्न सक्ने काम गर्न सक्छ। यहाँका सबै अभिलेख बनावटी हुन्।',
+    tryAs: (role: string) => `${role}का रूपमा लगइन गर्नुहोस्`,
+    tryBusy: 'लगइन हुँदैछ…',
+    tryFailed: 'डेमो सुरु हुन सकेन',
+    tryOff:
+      'सर्भरमा डेमो लगइन बन्द छ। ब्याकएन्डको .env मा DEMO_MODE=true राख्नुहोस्, npm run db:seed चलाउनुहोस्, र API फेरि सुरु गर्नुहोस्।',
+    orForm: 'वा खाताबाट लगइन गर्नुहोस्',
     demoTitle: 'डेमो खाताहरू, हरेक भूमिकाको एउटा',
     demoPassword: 'पासवर्ड तपाईंको .env फाइलमा भएको SEED_PASSWORD हो।',
     note: 'यहाँका सबै अभिलेख बनावटी हुन्। कुनै वास्तविक व्यक्तिको तथ्याङ्क छैन।',
