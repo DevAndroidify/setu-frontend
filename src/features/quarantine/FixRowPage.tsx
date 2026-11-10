@@ -3,26 +3,29 @@ import { useState } from 'react';
 import type { FormEvent } from 'react';
 import { Link, useNavigate, useParams } from 'react-router';
 import { useAuth } from '../../auth/context';
-import { Alert, Badge, Button, PageHeader } from '../../ui/controls';
+import { useStrings } from '../../i18n/language';
+import { Alert, Button, MarginNote, PageHeader, Raw, StatusMark } from '../../ui/controls';
 import { ProblemMessage } from '../../ui/ProblemMessage';
 import { Spinner } from '../../ui/Spinner';
 import { useToast } from '../../ui/toast-context';
 import ui from '../../ui/ui.module.css';
 import { getMapping } from '../mappings/api';
-import { fieldLabel, valueKey } from '../mappings/spec';
+import { valueKey } from '../mappings/spec';
 import { getRun } from '../runs/api';
 import { formatNumber } from '../sources/format';
-import { correctEntry, getEntry, retryRows, retrySummary, STAGE_LABELS } from './api';
+import { correctEntry, getEntry, listQuarantine, retryRows, retrySummary } from './api';
+import { columnPlan, maskCitizenship, withoutStep } from './fix-plan';
 import styles from './quarantine.module.css';
 
 /**
- * One quarantined row: its reasons next to the legacy columns behind them. The operator types
- * what the file should have held; "Check" stores the fix and shows how the row now maps, and
- * "Retry" sends it through the run again.
+ * One held row, column by column: what the old file says, what Setu made of it, and a fix for
+ * the columns behind a failing field. Saving runs every check again on the fix; sending it
+ * through again retries the row in its run. The old file's value is never changed.
  */
 export function FixRowPage() {
   const { entryId = '' } = useParams();
   const { user } = useAuth();
+  const t = useStrings().fix;
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const notify = useToast();
@@ -30,15 +33,22 @@ export function FixRowPage() {
     queryKey: ['quarantine-entry', entryId],
     queryFn: () => getEntry(entryId),
   });
+  const runId = entry.data?.runId;
   const run = useQuery({
-    queryKey: ['run', entry.data?.runId],
-    queryFn: () => getRun(entry.data!.runId),
-    enabled: !!entry.data,
+    queryKey: ['run', runId],
+    queryFn: () => getRun(runId!),
+    enabled: !!runId,
   });
   const mapping = useQuery({
     queryKey: ['mapping', run.data?.mappingId],
     queryFn: () => getMapping(run.data!.mappingId),
     enabled: !!run.data,
+  });
+  // The run's first page of held rows, for "1 of N" and the next one.
+  const siblings = useQuery({
+    queryKey: ['quarantine', 'siblings', runId],
+    queryFn: () => listQuarantine({ runId }),
+    enabled: !!runId,
   });
   const [edits, setEdits] = useState<Record<string, string>>({});
 
@@ -63,35 +73,62 @@ export function FixRowPage() {
   if (entry.isError) return <ProblemMessage error={entry.error} title="Could not load the row" />;
   const e = entry.data;
   const canFix = user?.role === 'operator' && !e.resolvedAt && run.data?.status === 'completed';
+  const fields = mapping.data?.spec.fields ?? [];
+  const plan = columnPlan(e, fields);
+  const citizenshipKey = valueKey('person.citizenship_no');
+  const dirty = Object.keys(edits).length > 0;
+  const busy = check.isPending || retry.isPending;
 
-  // The legacy columns each failing field is read from, so they can be shown first.
-  const failing = new Set(e.reasons.map((r) => r.field));
-  const behind = new Set(
-    (mapping.data?.spec.fields ?? [])
-      .filter((f) => failing.has(valueKey(f.target)))
-      .flatMap((f) => f.from),
-  );
-  const columns = Object.keys(e.raw).sort((a, b) => Number(behind.has(b)) - Number(behind.has(a)));
-  const current = (column: string) => edits[column] ?? e.corrected?.[column] ?? e.raw[column] ?? '';
+  const held = (siblings.data?.data ?? []).filter((s) => !s.resolvedAt);
+  const at = held.findIndex((s) => s.id === e.id);
+  const next = at >= 0 ? held[at + 1] : held.find((s) => s.id !== e.id);
+  const heldTotal = Math.max(run.data?.progress.quarantined ?? 0, held.length);
 
-  function submit(event: FormEvent) {
+  function saveOnly(event: FormEvent) {
     event.preventDefault();
     check.mutate();
   }
 
+  async function saveAndRetry() {
+    if (dirty) {
+      const saved = await check.mutateAsync().catch(() => null);
+      if (!saved || saved.result.status !== 'valid') return;
+    }
+    retry.mutate();
+  }
+
   const result = check.data?.result;
+  const row = formatNumber(e.rowNo);
   return (
     <section aria-labelledby="fix-title">
-      <p className={styles.crumbs}>
-        <Link to={`/quarantine?runId=${e.runId}`}>Quarantine</Link> /
-      </p>
-      <PageHeader title={`Row ${formatNumber(e.rowNo)}`} />
-      <p className={ui.muted}>
-        {STAGE_LABELS[e.stage]} in <Link to={`/runs/${e.runId}`}>run {e.runId.slice(0, 8)}</Link>
-        {run.data &&
-          ` (${run.data.source.name}, ${run.data.file.filename}, mapping v${run.data.mappingVersion})`}
-        .
-      </p>
+      <PageHeader
+        title={
+          <span id="fix-title">
+            {e.resolvedAt ? t.resolved(row) : t.title(row, e.reasons.length)}
+          </span>
+        }
+        back={{ to: `/quarantine?runId=${e.runId}`, label: t.back(run.data?.source.name) }}
+        meta={
+          run.data && (
+            <>
+              <Link to={`/runs/${e.runId}`}>run {e.runId.slice(0, 8)}</Link>
+              <Raw>{run.data.file.filename}</Raw>
+            </>
+          )
+        }
+        actions={
+          held.length > 0 && (
+            <span className={styles.position}>
+              {at >= 0 && <span>{t.position(formatNumber(at + 1), formatNumber(heldTotal))}</span>}
+              {next && (
+                <Link to={`/quarantine/${next.id}`}>
+                  {t.next} <span aria-hidden="true">→</span>
+                </Link>
+              )}
+            </span>
+          )
+        }
+      />
       {e.resolvedAt && (
         <Alert kind="success">
           <p>This row was fixed and placed.</p>
@@ -105,114 +142,155 @@ export function FixRowPage() {
           </p>
         </Alert>
       )}
-      <h2>Why</h2>
-      <ul className={styles.reasons}>
-        {e.reasons.map((r) => (
-          <li key={`${r.field}:${r.message}`}>
-            <strong>{fieldLabel(r.field)}</strong>: {r.message}
-          </li>
-        ))}
-      </ul>
 
-      <form onSubmit={submit} aria-labelledby="values-title">
-        <h2 id="values-title">Legacy values</h2>
-        <p className={ui.muted}>
-          The file's row is never changed: your correction is kept beside it, and every fix is
-          recorded in the run's audit trail (by column, not by value).
-        </p>
-        <table className={`${ui.table} ${styles.values}`}>
-          <thead>
-            <tr>
-              <th scope="col">Column</th>
-              <th scope="col">In the file</th>
-              <th scope="col">Value to use</th>
-            </tr>
-          </thead>
-          <tbody>
-            {columns.map((column) => {
-              const changed = current(column) !== (e.raw[column] ?? '');
-              return (
-                <tr key={column} className={behind.has(column) ? styles.behind : undefined}>
-                  <th scope="row">
-                    <code>{column}</code>
-                    {behind.has(column) && (
-                      <div className={styles.note}>behind a failing field</div>
-                    )}
-                  </th>
-                  <td className={styles.raw}>
-                    {e.raw[column] || <span className={ui.muted}>(empty)</span>}
-                  </td>
-                  <td>
-                    {canFix ? (
-                      <input
-                        className={`${ui.input} ${changed ? styles.changed : ''}`}
-                        aria-label={`Value to use for ${column}`}
-                        value={current(column)}
-                        onChange={(ev) => setEdits({ ...edits, [column]: ev.target.value })}
-                      />
-                    ) : (
-                      current(column)
-                    )}
-                  </td>
-                </tr>
-              );
-            })}
-          </tbody>
-        </table>
-        {check.isError && <ProblemMessage error={check.error} title="Not saved" />}
-        {canFix && (
-          <div className={styles.actions}>
-            <Button
-              type="submit"
-              variant="secondary"
-              disabled={Object.keys(edits).length === 0 || check.isPending}
-            >
-              {check.isPending ? 'Checking…' : 'Save fix and check'}
-            </Button>
-            <Button
-              onClick={() => retry.mutate()}
-              disabled={!e.corrected || Object.keys(edits).length > 0 || retry.isPending}
-            >
-              {retry.isPending ? 'Retrying…' : 'Retry this row'}
-            </Button>
+      <div className={styles.fixLayout}>
+        <form className={styles.fixTable} onSubmit={saveOnly} aria-labelledby="values-title">
+          <div className={styles.blockHead}>
+            <h2 id="values-title">{t.tableTitle}</h2>
+            <span className={ui.muted}>{t.tableHint}</span>
           </div>
-        )}
-      </form>
-      {retry.isError && <ProblemMessage error={retry.error} title="Retry failed" />}
+          <div className={ui.tableWrap}>
+            <table className={`${ui.table} ${styles.values}`}>
+              <thead>
+                <tr>
+                  <th scope="col">{t.column}</th>
+                  <th scope="col">{t.raw}</th>
+                  <th scope="col">{t.made}</th>
+                  <th scope="col">{t.yourFix}</th>
+                </tr>
+              </thead>
+              <tbody>
+                {plan.map((c) => {
+                  const masked = c.reads.includes(citizenshipKey);
+                  const show = (v: string) => (masked ? maskCitizenship(v) : v);
+                  const corrected = e.corrected?.[c.column];
+                  const value =
+                    edits[c.column] ?? corrected ?? (masked ? '' : (e.raw[c.column] ?? ''));
+                  return (
+                    <tr key={c.column} className={c.failing ? styles.failing : undefined}>
+                      <th scope="row">
+                        <Raw>{c.column}</Raw>
+                      </th>
+                      <td>
+                        {e.raw[c.column] ? (
+                          <Raw>{show(e.raw[c.column]!)}</Raw>
+                        ) : (
+                          <span className={ui.muted}>{t.empty}</span>
+                        )}
+                      </td>
+                      <td className={c.failing ? styles.madeFailing : undefined}>
+                        {c.problems.length > 0
+                          ? c.problems.map((p) => <div key={p}>{withoutStep(p)}</div>)
+                          : c.made.length > 0
+                            ? c.made.map((m) => <div key={m}>{masked ? t.masked : m}</div>)
+                            : c.reads.length === 0 && <span className={ui.muted}>{t.notRead}</span>}
+                      </td>
+                      <td>
+                        {c.editable && canFix && !mapping.isPending ? (
+                          <label className={styles.fixInput}>
+                            {t.newValue(c.column)}
+                            <input
+                              className={ui.input}
+                              value={value}
+                              autoComplete="off"
+                              onChange={(ev) => setEdits({ ...edits, [c.column]: ev.target.value })}
+                            />
+                          </label>
+                        ) : c.failing && corrected !== undefined ? (
+                          <Raw>{show(corrected)}</Raw>
+                        ) : (
+                          <span className={ui.muted}>{t.noChange}</span>
+                        )}
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+          <MarginNote>{t.note}</MarginNote>
+        </form>
 
-      {result && (
-        <section aria-labelledby="check-title">
-          <h2 id="check-title">With your fix</h2>
-          {result.status === 'valid' ? (
-            <Alert kind="success">
-              <p>
-                <Badge tone="success">passes</Badge> The row now maps cleanly. Retry it to place it.
-              </p>
-            </Alert>
-          ) : (
-            <Alert kind="error">
-              <p>Still fails:</p>
-              <ul>
-                {result.errors.map((r) => (
-                  <li key={`${r.field}:${r.message}`}>
-                    <strong>{fieldLabel(r.field)}</strong>: {r.message}
-                  </li>
-                ))}
-              </ul>
-            </Alert>
-          )}
-          <dl className={styles.result}>
-            {Object.entries(result.values)
-              .filter(([, v]) => v !== null)
-              .map(([field, value]) => (
-                <div key={field}>
-                  <dt>{fieldLabel(field)}</dt>
-                  <dd>{value}</dd>
-                </div>
+        <aside className={styles.side} aria-label={t.whyTitle}>
+          <section className={styles.why} aria-labelledby="why-title">
+            <h2 id="why-title">{t.whyTitle}</h2>
+            <ol className={styles.whyList}>
+              {e.reasons.map((r, i) => (
+                <li key={`${r.field}:${r.message}`}>
+                  <span className={styles.reasonNo} aria-hidden="true">
+                    {i + 1}
+                  </span>
+                  <span>
+                    <Raw>{r.field}</Raw> {withoutStep(r.message)}
+                  </span>
+                </li>
               ))}
-          </dl>
-        </section>
-      )}
+            </ol>
+          </section>
+
+          {canFix && (
+            <section className={styles.withFix} aria-labelledby="check-title">
+              <h2 id="check-title">{t.withFix}</h2>
+              {result ? (
+                <>
+                  <dl className={styles.result}>
+                    {Object.entries(result.values)
+                      .filter(([, v]) => v !== null)
+                      .map(([field, v]) => (
+                        <div key={field}>
+                          <dt>
+                            <Raw>{field}</Raw>
+                          </dt>
+                          <dd>{field === citizenshipKey ? maskCitizenship(v!) : v}</dd>
+                        </div>
+                      ))}
+                  </dl>
+                  {result.status === 'valid' ? (
+                    <p className={styles.passes}>
+                      <StatusMark kind="loaded">{t.passes}</StatusMark>
+                    </p>
+                  ) : (
+                    <div role="alert" className={styles.fails}>
+                      <StatusMark kind="held">{t.stillFails}</StatusMark>
+                      <ul>
+                        {result.errors.map((r) => (
+                          <li key={`${r.field}:${r.message}`}>
+                            <Raw>{r.field}</Raw> {withoutStep(r.message)}
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+                </>
+              ) : (
+                <p className={ui.muted}>{t.withFixHint}</p>
+              )}
+              {check.isError && <ProblemMessage error={check.error} title="Not saved" />}
+              {retry.isError && <ProblemMessage error={retry.error} title="Retry failed" />}
+              <Button
+                className={styles.wide}
+                onClick={() => void saveAndRetry()}
+                disabled={
+                  busy ||
+                  !(dirty || ((e.corrected || check.data) && result?.status !== 'quarantined'))
+                }
+              >
+                {busy ? t.saving : t.saveAndRetry}
+              </Button>
+              <Button
+                type="button"
+                variant="secondary"
+                className={styles.wide}
+                onClick={() => check.mutate()}
+                disabled={busy || !dirty}
+              >
+                {t.saveOnly}
+              </Button>
+              <p className={ui.muted}>{t.savedNote}</p>
+            </section>
+          )}
+        </aside>
+      </div>
     </section>
   );
 }

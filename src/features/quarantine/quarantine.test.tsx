@@ -140,11 +140,17 @@ describe('quarantine list', () => {
 });
 
 describe('fixing a row', () => {
-  it('puts the columns behind the failing field first, saves the fix and shows the row now passes', async () => {
-    const { api } = renderApp({
+  it('puts the columns behind the failing field first, saves the fix, passes it and sends it through again', async () => {
+    const { api, router } = renderApp({
       route: '/quarantine/41',
       user: operator,
       handlers: fixHandlers({
+        'POST /api/v1/quarantine/retry': [
+          200,
+          { retried: 1, passed: 1, stillFailing: 0, reopened: true },
+        ],
+        'GET /api/v1/runs': [200, { data: [], nextCursor: null }],
+        'GET /api/v1/quarantine': [200, { data: [], nextCursor: null }],
         'PATCH /api/v1/quarantine/41': (req) => [
           200,
           {
@@ -161,19 +167,63 @@ describe('fixing a row', () => {
         ],
       }),
     });
-    expect(await screen.findByText('behind a failing field')).toBeInTheDocument();
+    expect(
+      await screen.findByRole('heading', { level: 1, name: 'Row 128 is held for one reason' }),
+    ).toBeInTheDocument();
+    const input = await screen.findByLabelText('New value for JANMA_MITI');
     const firstColumn = screen.getAllByRole('rowheader')[0]!;
     expect(firstColumn).toHaveTextContent('JANMA_MITI');
+    // Only the column behind the failing field gets an input.
+    expect(screen.queryByLabelText('New value for NAAM')).not.toBeInTheDocument();
 
-    const input = screen.getByLabelText('Value to use for JANMA_MITI');
     await userEvent.clear(input);
     await userEvent.type(input, '2045/12/4');
-    await userEvent.click(screen.getByRole('button', { name: 'Save fix and check' }));
-    expect(await screen.findByText(/The row now maps cleanly/)).toBeInTheDocument();
+    await userEvent.click(screen.getByRole('button', { name: 'Save the fix only' }));
+    expect(await screen.findByText('Passes every check')).toBeInTheDocument();
     expect(screen.getByText('1988-03-26')).toBeInTheDocument();
     expect(api.calls.find((c) => c.method === 'PATCH')!.body).toEqual({
       values: { JANMA_MITI: '2045/12/4' },
     });
+
+    await userEvent.click(screen.getByRole('button', { name: 'Save and send through again' }));
+    await waitFor(() => expect(router.state.location.pathname).toBe('/quarantine'));
+    expect(api.calls.find((c) => c.path === '/api/v1/quarantine/retry')!.body).toEqual({
+      runId: 'run-12345678',
+      ids: ['41'],
+    });
+  });
+
+  it('masks a citizenship number in the old file and in the result', async () => {
+    renderApp({
+      route: '/quarantine/41',
+      user: operator,
+      handlers: fixHandlers({
+        'GET /api/v1/quarantine/41': [
+          200,
+          entry({ raw: { ...entry().raw, NAGARIKTA: '27-01-74-04417' } }),
+        ],
+        'GET /api/v1/mappings/map-1': [
+          200,
+          {
+            ...mapping,
+            spec: {
+              fields: [
+                ...mapping.spec.fields,
+                {
+                  target: 'person.citizenship_no',
+                  from: ['NAGARIKTA'],
+                  transforms: [],
+                  rules: [],
+                  onError: 'quarantine',
+                },
+              ],
+            },
+          },
+        ],
+      }),
+    });
+    expect(await screen.findByText('•••••••• 4417')).toBeInTheDocument();
+    expect(screen.queryByText('27-01-74-04417')).not.toBeInTheDocument();
   });
 
   it('shows the new reasons when the fix still fails', async () => {
@@ -203,10 +253,10 @@ describe('fixing a row', () => {
         ],
       }),
     });
-    const input = await screen.findByLabelText('Value to use for JANMA_MITI');
+    const input = await screen.findByLabelText('New value for JANMA_MITI');
     await userEvent.clear(input);
     await userEvent.type(input, '2045/14/4');
-    await userEvent.click(screen.getByRole('button', { name: 'Save fix and check' }));
+    await userEvent.click(screen.getByRole('button', { name: 'Save the fix only' }));
     expect(await screen.findByText(/2045-14-04 is not a real BS date/)).toBeInTheDocument();
   });
 
@@ -224,8 +274,8 @@ describe('fixing a row', () => {
         'GET /api/v1/quarantine': [200, { data: [], nextCursor: null }],
       }),
     });
-    expect(await screen.findByLabelText('Value to use for JANMA_MITI')).toHaveValue('2045/12/4');
-    await userEvent.click(screen.getByRole('button', { name: 'Retry this row' }));
+    expect(await screen.findByLabelText('New value for JANMA_MITI')).toHaveValue('2045/12/4');
+    await userEvent.click(screen.getByRole('button', { name: 'Save and send through again' }));
     await waitFor(() => expect(router.state.location.search).toBe('?runId=run-12345678'));
   });
 
@@ -240,9 +290,9 @@ describe('fixing a row', () => {
         ],
       }),
     });
-    const input = await screen.findByLabelText('Value to use for JANMA_MITI');
+    const input = await screen.findByLabelText('New value for JANMA_MITI');
     await userEvent.type(input, '0');
-    await userEvent.click(screen.getByRole('button', { name: 'Save fix and check' }));
+    await userEvent.click(screen.getByRole('button', { name: 'Save the fix only' }));
     expect(await screen.findByRole('alert')).toHaveTextContent('already been fixed and retried');
   });
 
@@ -257,6 +307,6 @@ describe('fixing a row', () => {
     expect(
       await screen.findByText(/once their run has completed \(this one is rolled back\)/),
     ).toBeInTheDocument();
-    expect(screen.queryByLabelText('Value to use for JANMA_MITI')).not.toBeInTheDocument();
+    expect(screen.queryByLabelText('New value for JANMA_MITI')).not.toBeInTheDocument();
   });
 });

@@ -1,6 +1,9 @@
 import type { Role } from '../auth/session';
 
-/** Interface text for the site frame, sign-in and home page, in English and Nepali. */
+/** "Held for two reasons": small counts in words, as in plain writing. */
+const NUMBER_WORDS = ['no', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine'];
+
+/** Interface text for the site frame and the redesigned pages, in English and Nepali. */
 export const en = {
   skip: 'Skip to main content',
   subtitle: 'Legacy records migration',
@@ -153,6 +156,37 @@ export const en = {
     } as Record<'preetiToUnicode' | 'bsToAd' | 'vdcToLocalUnit', string>,
     fixedNote:
       'Examples from this file. Each loaded record keeps a link to its source row, so you can trace any value back.',
+  },
+  fix: {
+    back: (source?: string) => (source ? `Quarantine · ${source}` : 'Quarantine'),
+    title: (row: string, reasons: number) =>
+      `Row ${row} is held for ${NUMBER_WORDS[reasons] ?? reasons} ${reasons === 1 ? 'reason' : 'reasons'}`,
+    resolved: (row: string) => `Row ${row} was fixed and placed`,
+    position: (at: string, of: string) => `${at} of ${of} held rows`,
+    next: 'Next held row',
+    tableTitle: 'The row, column by column',
+    tableHint: 'Fix the legacy value. Setu runs every check again on your fix.',
+    column: 'Column',
+    raw: 'What the old file says',
+    made: 'What Setu made of it',
+    yourFix: 'Your fix',
+    noChange: 'No change needed',
+    notRead: 'Not read by the mapping',
+    empty: '(empty)',
+    newValue: (column: string) => `New value for ${column}`,
+    masked: 'Masked',
+    note: 'this column never changes. it’s exactly what the old file said, so you can always check.',
+    whyTitle: 'Why it was held',
+    withFix: 'With your fix',
+    withFixHint:
+      'Type a fix in the table, then save it. Setu runs every check again and shows the result here.',
+    passes: 'Passes every check',
+    stillFails: 'Still fails',
+    saveAndRetry: 'Save and send through again',
+    saveOnly: 'Save the fix only',
+    saving: 'Saving…',
+    savedNote:
+      'Your fix is saved next to the original, with your name and the time. Nothing in the old file is overwritten.',
   },
 };
 
@@ -309,5 +343,35 @@ export const ne: Strings = {
     },
     fixedNote:
       'यही फाइलका उदाहरण। भण्डारण गरिएको हरेक अभिलेखले आफ्नो स्रोत पङ्क्तिको लिङ्क राख्छ, त्यसैले जुनसुकै मान पछाडिसम्म पछ्याउन सकिन्छ।',
+  },
+  fix: {
+    back: (source?: string) => (source ? `क्वारेन्टाइन · ${source}` : 'क्वारेन्टाइन'),
+    title: (row: string, reasons: number) => `पङ्क्ति ${row} ${reasons} कारणले रोकिएको छ`,
+    resolved: (row: string) => `पङ्क्ति ${row} सच्याएर भण्डारण गरियो`,
+    position: (at: string, of: string) => `${of} रोकिएका पङ्क्तिमध्ये ${at}`,
+    next: 'अर्को रोकिएको पङ्क्ति',
+    tableTitle: 'पङ्क्ति, स्तम्भ-स्तम्भ गरेर',
+    tableHint: 'पुरानो मान सच्याउनुहोस्। सेतुले तपाईंको सुधारमा हरेक जाँच फेरि चलाउँछ।',
+    column: 'स्तम्भ',
+    raw: 'पुरानो फाइलमा के छ',
+    made: 'सेतुले के बनायो',
+    yourFix: 'तपाईंको सुधार',
+    noChange: 'सच्याउनु पर्दैन',
+    notRead: 'म्यापिङले पढ्दैन',
+    empty: '(खाली)',
+    newValue: (column: string) => `${column} को नयाँ मान`,
+    masked: 'लुकाइएको',
+    note: 'यो स्तम्भ कहिल्यै बदलिँदैन। पुरानो फाइलमा जे थियो ठ्याक्कै त्यही हो, त्यसैले जहिले पनि जाँच्न सकिन्छ।',
+    whyTitle: 'किन रोकियो',
+    withFix: 'तपाईंको सुधारसहित',
+    withFixHint:
+      'तालिकामा सुधार लेखेर सेभ गर्नुहोस्। सेतुले हरेक जाँच फेरि चलाएर नतिजा यहाँ देखाउँछ।',
+    passes: 'सबै जाँच पार गर्छ',
+    stillFails: 'अझै असफल',
+    saveAndRetry: 'सेभ गरेर फेरि पठाउनुहोस्',
+    saveOnly: 'सुधार मात्र सेभ गर्नुहोस्',
+    saving: 'सेभ हुँदैछ…',
+    savedNote:
+      'तपाईंको सुधार तपाईंको नाम र समयसहित मूल मानसँगै सेभ हुन्छ। पुरानो फाइलमा केही पनि मेटिँदैन।',
   },
 };

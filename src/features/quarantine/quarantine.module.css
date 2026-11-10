@@ -1,8 +1,4 @@
-.crumbs {
-  margin: 0 0 var(--space-2);
-  font-size: var(--text-sm);
-  color: var(--color-text-muted);
-}
+/* Quarantine: the list of held rows, and fixing one row. */
 
 .filters {
   display: flex;
@@ -26,54 +22,210 @@
   padding-left: var(--space-4);
 }
 
+/* Fix a held row: the table on the left, why and the result on the right. */
+
+.position {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-4);
+  color: var(--color-text-muted);
+}
+
+.position a {
+  color: var(--color-text);
+  font-weight: 500;
+}
+
+.fixLayout {
+  display: flex;
+  flex-wrap: wrap;
+  margin-top: calc(-1 * var(--space-5));
+  border-bottom: 1px solid var(--color-text);
+}
+
+.fixTable {
+  flex: 2 1 42.5rem;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1.125rem;
+  padding: var(--space-5) var(--space-5) var(--space-6) 0;
+  box-shadow: inset -1px 0 0 var(--color-text);
+}
+
+.blockHead {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: var(--space-3);
+}
+
+.blockHead h2 {
+  margin: 0;
+  font-size: 1.375rem;
+}
+
 .values {
-  max-width: 56rem;
+  min-width: 40rem;
 }
 
-.values input {
-  width: 100%;
-}
-
-.behind {
-  background: var(--color-warning-bg);
-}
-
-.note {
-  font-size: var(--text-xs);
-  color: var(--color-warning);
+.values th[scope='row'] {
   font-weight: 400;
 }
 
-.raw {
-  font-family: var(--font-mono);
-  word-break: break-all;
+/* A column behind a failing field: amber tint and an amber edge. */
+.failing td,
+.failing th {
+  background: var(--color-warning-bg);
 }
 
-.changed {
-  border-color: var(--color-focus) !important;
-  background: var(--color-selected) !important;
+.failing th[scope='row'] {
+  padding-left: var(--space-3);
+  box-shadow: inset 3px 0 0 var(--color-held);
+  font-weight: 500;
 }
 
-.actions {
+.madeFailing {
+  color: var(--color-warning);
+  font-weight: 500;
+}
+
+.fixInput {
   display: flex;
-  flex-wrap: wrap;
-  gap: var(--space-2);
-  margin: var(--space-4) 0;
+  flex-direction: column;
+  gap: var(--space-1);
+  font-size: 0.8125rem;
+  color: var(--color-text-muted);
+}
+
+.fixInput input {
+  width: 100%;
+  min-height: 2.75rem;
+  font-family: var(--font-mono);
+  font-size: 0.9375rem;
+}
+
+.side {
+  flex: 1 1 23.75rem;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.why,
+.withFix {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  padding: var(--space-5);
+}
+
+.why {
+  border-bottom: 1px solid var(--color-border);
+}
+
+.why h2,
+.withFix h2 {
+  margin: 0;
+  font-size: 1.375rem;
+}
+
+.withFix {
+  gap: 0.875rem;
+  background: var(--color-brand-tint);
+}
+
+.withFix h2 {
+  font-size: 1.25rem;
+}
+
+.withFix p {
+  margin: 0;
+}
+
+.whyList {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  line-height: 1.45;
+}
+
+.whyList li {
+  display: flex;
+  gap: var(--space-3);
+}
+
+.reasonNo {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 1.375rem;
+  height: 1.375rem;
+  background: var(--color-held);
+  color: #1f1300;
+  font-size: 0.8125rem;
+  font-weight: 600;
 }
 
 .result {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(14rem, 1fr));
+  grid-template-columns: auto 1fr;
   gap: var(--space-2) var(--space-4);
-  max-width: 56rem;
+  margin: 0;
 }
 
-.result dt {
-  font-size: var(--text-xs);
+.result > div {
+  display: contents;
+}
+
+.result dt code {
   color: var(--color-text-muted);
 }
 
 .result dd {
   margin: 0;
+  font-weight: 500;
+  overflow-wrap: anywhere;
+}
+
+.passes {
   font-weight: 600;
+  color: var(--color-brand-text);
+}
+
+.fails ul {
+  margin: var(--space-2) 0 0;
+  padding-left: var(--space-4);
+}
+
+.wide {
+  width: 100%;
+}
+
+@media (max-width: 48rem) {
+  .fixLayout {
+    margin-top: 0;
+  }
+
+  .fixTable {
+    padding-right: 0;
+    box-shadow: none;
+    border-bottom: 1px solid var(--color-text);
+  }
+
+  .why,
+  .withFix {
+    padding-left: 0;
+    padding-right: 0;
+  }
+
+  .withFix {
+    padding-left: var(--space-4);
+    padding-right: var(--space-4);
+  }
 }
