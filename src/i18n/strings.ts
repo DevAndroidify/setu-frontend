@@ -188,6 +188,11 @@ export const en = {
     savedNote:
       'Your fix is saved next to the original, with your name and the time. Nothing in the old file is overwritten.',
   },
+  /** Back links in page title blocks. */
+  back: {
+    source: 'The source',
+    run: (id: string) => `Run ${id}`,
+  },
   matches: {
     title: 'Is this the same person?',
     empty: 'Nothing is waiting for review.',
@@ -420,6 +425,10 @@ export const ne: Strings = {
     saving: 'सेभ हुँदैछ…',
     savedNote:
       'तपाईंको सुधार तपाईंको नाम र समयसहित मूल मानसँगै सेभ हुन्छ। पुरानो फाइलमा केही पनि मेटिँदैन।',
+  },
+  back: {
+    source: 'स्रोत',
+    run: (id: string) => `रन ${id}`,
   },
   matches: {
     title: 'के यी एउटै व्यक्ति हुन्?',

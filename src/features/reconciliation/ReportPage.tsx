@@ -1,5 +1,5 @@
 import { useMutation, useQuery } from '@tanstack/react-query';
-import { Link, useParams } from 'react-router';
+import { useParams } from 'react-router';
 import { Alert, Badge, Button, PageHeader } from '../../ui/controls';
 import { ProblemMessage } from '../../ui/ProblemMessage';
 import { Spinner } from '../../ui/Spinner';
@@ -10,6 +10,7 @@ import { MODE } from '../runs/status';
 import { formatNumber } from '../sources/format';
 import { downloadReportCsv, getReport, type Report } from './api';
 import styles from './reconciliation.module.css';
+import { useStrings } from '../../i18n/language';
 
 const label = (field: string) => targetLabel(`person.${field}`);
 
@@ -59,6 +60,7 @@ function Balance({ report }: { report: Report }) {
 
 /** The proof a run did what it should: counts that balance, matching checksums, a sampled diff. */
 export function ReportPage() {
+  const strings = useStrings();
   const { runId = '' } = useParams();
   const run = useQuery({ queryKey: ['run', runId], queryFn: () => getRun(runId) });
   const report = useQuery({ queryKey: ['report', runId], queryFn: () => getReport(runId) });
@@ -70,12 +72,9 @@ export function ReportPage() {
 
   return (
     <section aria-labelledby="report-title">
-      <p className={styles.crumbs}>
-        <Link to="/reports">Reports</Link> /{' '}
-        <Link to={`/runs/${runId}`}>Run {runId.slice(0, 8)}</Link> /
-      </p>
       <PageHeader
-        title="Reconciliation report"
+        title={<span id="report-title">Reconciliation report</span>}
+        back={{ to: `/runs/${runId}`, label: strings.back.run(runId.slice(0, 8)) }}
         actions={
           <Button
             variant="secondary"

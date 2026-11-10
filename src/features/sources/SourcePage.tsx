@@ -10,6 +10,7 @@ import { formatBytes, formatDateTime, formatNumber } from './format';
 import styles from './sources.module.css';
 import { UploadPanel } from './UploadPanel';
 import { MappingsSection } from '../mappings/MappingsSection';
+import { useStrings } from '../../i18n/language';
 
 function ProfileBadge({ status }: { status: SourceFile['profileStatus'] }) {
   if (status === 'ok') return <Badge tone="success">Profiled</Badge>;
@@ -18,6 +19,7 @@ function ProfileBadge({ status }: { status: SourceFile['profileStatus'] }) {
 }
 
 export function SourcePage() {
+  const strings = useStrings();
   const { sourceId = '' } = useParams();
   const queryClient = useQueryClient();
   const notify = useToast();
@@ -37,10 +39,10 @@ export function SourcePage() {
 
   return (
     <section aria-labelledby="source-title">
-      <p className={styles.crumbs}>
-        <Link to="/sources">Sources</Link> /
-      </p>
-      <PageHeader title={s.name} />
+      <PageHeader
+        title={<span id="source-title">{s.name}</span>}
+        back={{ to: '/sources', label: strings.nav['/sources']![0] }}
+      />
       <dl className={styles.facts}>
         <div>
           <dt>Agency</dt>

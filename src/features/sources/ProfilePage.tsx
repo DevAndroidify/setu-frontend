@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { useState } from 'react';
-import { Link, useParams } from 'react-router';
+import { useParams } from 'react-router';
 import { Alert, Badge, PageHeader } from '../../ui/controls';
 import ui from '../../ui/ui.module.css';
 import { ProblemMessage } from '../../ui/ProblemMessage';
@@ -8,6 +8,7 @@ import { Spinner } from '../../ui/Spinner';
 import { type ColumnProfile, getProfile, listFiles } from './api';
 import { columnFlags, formatNumber } from './format';
 import styles from './sources.module.css';
+import { useStrings } from '../../i18n/language';
 
 const PATTERN_NOTE = '9 digit · ९ Devanagari digit · a Latin word · क Devanagari word';
 
@@ -70,6 +71,7 @@ function Column({ column }: { column: ColumnProfile }) {
 }
 
 export function ProfilePage() {
+  const strings = useStrings();
   const { sourceId = '', fileId = '' } = useParams();
   const [onlyFlagged, setOnlyFlagged] = useState(false);
   const files = useQuery({
@@ -85,10 +87,12 @@ export function ProfilePage() {
 
   return (
     <section aria-labelledby="profile-title">
-      <p className={styles.crumbs}>
-        <Link to="/sources">Sources</Link> / <Link to={`/sources/${sourceId}`}>Source</Link> /
-      </p>
-      <PageHeader title={file ? `Profile of ${file.filename}` : 'File profile'} />
+      <PageHeader
+        title={
+          <span id="profile-title">{file ? `Profile of ${file.filename}` : 'File profile'}</span>
+        }
+        back={{ to: `/sources/${sourceId}`, label: strings.back.source }}
+      />
       {profile.isPending && <Spinner label="Loading the profile" />}
       {profile.isError && (
         <ProblemMessage error={profile.error} title="Could not load the profile" />

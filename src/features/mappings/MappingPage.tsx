@@ -11,9 +11,11 @@ import { getMapping, previewMapping } from './api';
 import styles from './mappings.module.css';
 import { PreviewTable } from './PreviewTable';
 import { describeField, targetLabel } from './spec';
+import { useStrings } from '../../i18n/language';
 
 /** A saved mapping version: read-only, previewable, and the starting point for a run. */
 export function MappingPage() {
+  const strings = useStrings();
   const { sourceId = '', mappingId = '' } = useParams();
   const source = useQuery({ queryKey: ['source', sourceId], queryFn: () => getSource(sourceId) });
   const mapping = useQuery({
@@ -36,12 +38,9 @@ export function MappingPage() {
 
   return (
     <section aria-labelledby="mapping-title">
-      <p className={styles.crumbs}>
-        <Link to="/sources">Sources</Link> /{' '}
-        <Link to={`/sources/${sourceId}`}>{source.data?.name ?? 'Source'}</Link> /
-      </p>
       <PageHeader
-        title={`Mapping version ${m.version}`}
+        title={<span id="mapping-title">{`Mapping version ${m.version}`}</span>}
+        back={{ to: `/sources/${sourceId}`, label: source.data?.name ?? strings.back.source }}
         actions={
           <span className={styles.toolbar}>
             <Link

@@ -1,6 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useMemo, useState } from 'react';
-import { Link, useNavigate, useParams, useSearchParams } from 'react-router';
+import { useNavigate, useParams, useSearchParams } from 'react-router';
 import { ApiError } from '../../api/client';
 import { Alert, Button, PageHeader, SelectField } from '../../ui/controls';
 import { ProblemMessage } from '../../ui/ProblemMessage';
@@ -14,6 +14,7 @@ import styles from './mappings.module.css';
 import { PreviewTable } from './PreviewTable';
 import { cleanSpec, draftProblems, emptyField, errorsByField } from './spec';
 import { HOUSEHOLD_REGISTER_TEMPLATE } from './template';
+import { useStrings } from '../../i18n/language';
 
 const BLANK: MappingSpec = { fields: [emptyField('person.name_ne'), emptyField('person.name_en')] };
 
@@ -22,6 +23,7 @@ const BLANK: MappingSpec = { fields: [emptyField('person.name_ne'), emptyField('
  * it, and saves it as the source's next version. Saved versions are never edited.
  */
 export function MappingEditorPage() {
+  const strings = useStrings();
   const { sourceId = '' } = useParams();
   const [params] = useSearchParams();
   const fromId = params.get('from');
@@ -116,12 +118,13 @@ export function MappingEditorPage() {
 
   return (
     <section aria-labelledby="mapping-editor-title">
-      <p className={styles.crumbs}>
-        <Link to="/sources">Sources</Link> /{' '}
-        <Link to={`/sources/${sourceId}`}>{source.data?.name ?? 'Source'}</Link> /
-      </p>
       <PageHeader
-        title={base.data ? `New version from version ${base.data.version}` : 'New mapping'}
+        title={
+          <span id="mapping-editor-title">
+            {base.data ? `New version from version ${base.data.version}` : 'New mapping'}
+          </span>
+        }
+        back={{ to: `/sources/${sourceId}`, label: source.data?.name ?? strings.back.source }}
       />
       <p className={ui.muted}>
         A mapping says, for each target field, which source columns it comes from, how the value is

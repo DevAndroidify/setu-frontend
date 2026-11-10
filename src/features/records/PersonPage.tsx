@@ -12,6 +12,7 @@ import { Spinner } from '../../ui/Spinner';
 import ui from '../../ui/ui.module.css';
 import { GENDER, getLineage, getPerson, unmaskPerson } from './api';
 import styles from './records.module.css';
+import { useStrings } from '../../i18n/language';
 
 const MAY_UNMASK: Role[] = ['reviewer', 'auditor'];
 const SEES_RUNS: Role[] = ['operator', 'approver', 'auditor', 'admin'];
@@ -64,6 +65,7 @@ function Lineage({ personId }: { personId: string }) {
 }
 
 export function PersonPage() {
+  const strings = useStrings();
   const { personId = '' } = useParams();
   const { user } = useAuth();
   const person = useQuery({ queryKey: ['person', personId], queryFn: () => getPerson(personId) });
@@ -92,10 +94,10 @@ export function PersonPage() {
 
   return (
     <section aria-labelledby="person-title">
-      <p className={styles.crumbs}>
-        <Link to="/persons">Records</Link> /
-      </p>
-      <PageHeader title={p.name_en} />
+      <PageHeader
+        title={<span id="person-title">{p.name_en}</span>}
+        back={{ to: '/persons', label: strings.nav['/persons']![0] }}
+      />
       <p lang="ne" className={styles.nepali}>
         {p.name_ne}
       </p>
